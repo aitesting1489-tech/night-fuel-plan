@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, UtensilsCrossed } from "lucide-react";
+import { Check, Coffee } from "lucide-react";
 
 interface FuelCardProps {
   time: string;
