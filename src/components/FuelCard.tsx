@@ -21,7 +21,7 @@ const FuelCard = ({ time, title, description, calories, logged, onLog }: FuelCar
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <UtensilsCrossed className="h-4 w-4 text-nutrition shrink-0" />
+            <Coffee className="h-4 w-4 text-nutrition shrink-0" />
             <span className="font-display text-xs font-medium text-muted-foreground">{time}</span>
           </div>
           <h3 className="font-display font-semibold text-foreground text-sm truncate">{title}</h3>

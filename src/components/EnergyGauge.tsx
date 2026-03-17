@@ -12,7 +12,7 @@ const EnergyGauge = ({ level }: EnergyGaugeProps) => {
     <div className="rounded-lg bg-card p-4 glow-primary">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Zap className="h-5 w-5 text-energy" />
+          <Sun className="h-5 w-5 text-energy" />
           <span className="font-display text-sm font-semibold text-foreground">Energy Level</span>
         </div>
         <span className="font-display text-sm text-muted-foreground">{label}</span>
