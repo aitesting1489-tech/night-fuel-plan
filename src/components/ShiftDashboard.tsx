@@ -11,11 +11,12 @@ import NutritionSummary from "./NutritionSummary";
 interface ShiftDashboardProps {
   startTime: string;
   endTime: string;
+  diet: DietType;
   onBack: () => void;
 }
 
-const ShiftDashboard = ({ startTime, endTime, onBack }: ShiftDashboardProps) => {
-  const schedule = useMemo(() => generateSchedule(startTime, endTime), [startTime, endTime]);
+const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProps) => {
+  const schedule = useMemo(() => generateSchedule(startTime, endTime, diet), [startTime, endTime, diet]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
 
   const toggleLog = (id: string) => {
