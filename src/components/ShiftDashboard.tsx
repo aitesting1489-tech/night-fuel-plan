@@ -29,8 +29,12 @@ const ShiftDashboard = ({ startTime, endTime, onBack }: ShiftDashboardProps) => 
 
   const totalFuel = schedule.filter((s) => s.type === "fuel");
   const totalDrip = schedule.filter((s) => s.type === "drip");
-  const loggedFuel = totalFuel.filter((s) => logged.has(s.id)).length;
+  const loggedFuelItems = totalFuel.filter((s) => logged.has(s.id));
+  const loggedFuel = loggedFuelItems.length;
   const loggedDrip = totalDrip.filter((s) => logged.has(s.id));
+
+  const totalCalories = totalFuel.reduce((sum, s) => sum + (s.calories || 0), 0);
+  const loggedCalories = loggedFuelItems.reduce((sum, s) => sum + (s.calories || 0), 0);
 
   const hydrationLogged = loggedDrip.reduce((sum, s) => sum + (s.amount || 0), 0);
   const hydrationTarget = totalDrip.reduce((sum, s) => sum + (s.amount || 0), 0);
