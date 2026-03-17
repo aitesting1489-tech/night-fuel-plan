@@ -7,6 +7,7 @@ import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
 import NutritionSummary from "./NutritionSummary";
+import ProUpsell from "./ProUpsell";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -109,8 +110,13 @@ const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProp
       </div>
 
       {/* Nutrition Summary */}
-      <div className="mt-6 mb-4">
+      <div className="mt-6">
         <NutritionSummary totalCalories={totalCalories} loggedCalories={loggedCalories} />
+      </div>
+
+      {/* Pro Upsell */}
+      <div className="mt-4 mb-4">
+        <ProUpsell />
       </div>
 
       <p className="text-center text-xs text-muted-foreground mt-4 mb-4">
