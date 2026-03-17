@@ -6,6 +6,7 @@ import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
+import NutritionSummary from "./NutritionSummary";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -28,8 +29,12 @@ const ShiftDashboard = ({ startTime, endTime, onBack }: ShiftDashboardProps) => 
 
   const totalFuel = schedule.filter((s) => s.type === "fuel");
   const totalDrip = schedule.filter((s) => s.type === "drip");
-  const loggedFuel = totalFuel.filter((s) => logged.has(s.id)).length;
+  const loggedFuelItems = totalFuel.filter((s) => logged.has(s.id));
+  const loggedFuel = loggedFuelItems.length;
   const loggedDrip = totalDrip.filter((s) => logged.has(s.id));
+
+  const totalCalories = totalFuel.reduce((sum, s) => sum + (s.calories || 0), 0);
+  const loggedCalories = loggedFuelItems.reduce((sum, s) => sum + (s.calories || 0), 0);
 
   const hydrationLogged = loggedDrip.reduce((sum, s) => sum + (s.amount || 0), 0);
   const hydrationTarget = totalDrip.reduce((sum, s) => sum + (s.amount || 0), 0);
@@ -102,7 +107,12 @@ const ShiftDashboard = ({ startTime, endTime, onBack }: ShiftDashboardProps) => 
         ))}
       </div>
 
-      <p className="text-center text-xs text-muted-foreground mt-8 mb-4">
+      {/* Nutrition Summary */}
+      <div className="mt-6 mb-4">
+        <NutritionSummary totalCalories={totalCalories} loggedCalories={loggedCalories} />
+      </div>
+
+      <p className="text-center text-xs text-muted-foreground mt-4 mb-4">
         Tap ✓ to log each item as you go
       </p>
     </motion.div>
