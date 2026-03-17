@@ -36,7 +36,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
           <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-energy/10 mb-2">
             <Moon className="h-7 w-7 text-energy" />
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">LunarFuel</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">LunarFuel</h1>
           <p className="text-muted-foreground text-sm">Fuel your night shift. Set your hours to generate a custom schedule.</p>
         </div>
 

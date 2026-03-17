@@ -15,7 +15,7 @@ const FuelCard = ({ time, title, description, calories, logged, onLog }: FuelCar
     <motion.div
       layout
       className={`rounded-lg bg-card border p-4 transition-colors duration-150 ${
-        logged ? "border-nutrition/40 glow-nutrition" : "border-border"
+        logged ? "border-nutrition/40 glow-nutrition" : "border-border neon-border"
       }`}
     >
       <div className="flex items-start justify-between gap-3">

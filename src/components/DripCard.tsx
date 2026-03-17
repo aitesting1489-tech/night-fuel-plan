@@ -13,7 +13,7 @@ const DripCard = ({ time, amount, logged, onLog }: DripCardProps) => {
     <motion.div
       layout
       className={`rounded-lg bg-card border p-4 transition-colors duration-150 ${
-        logged ? "border-hydration/40 glow-hydration" : "border-border"
+        logged ? "border-hydration/40 glow-hydration" : "border-border neon-border"
       }`}
     >
       <div className="flex items-center justify-between gap-3">

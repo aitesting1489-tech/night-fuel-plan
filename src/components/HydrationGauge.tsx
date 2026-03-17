@@ -10,7 +10,7 @@ const HydrationGauge = ({ current, target }: HydrationGaugeProps) => {
   const percent = Math.min((current / target) * 100, 100);
 
   return (
-    <div className="rounded-lg bg-card p-4 glow-hydration">
+    <div className="rounded-lg bg-card p-4 glow-hydration neon-border">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Droplets className="h-5 w-5 text-hydration" />
