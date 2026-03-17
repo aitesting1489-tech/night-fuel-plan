@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Zap } from "lucide-react";
+import { Sun } from "lucide-react";
 
 interface EnergyGaugeProps {
   level: number; // 0-100
