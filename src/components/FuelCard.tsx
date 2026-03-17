@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, UtensilsCrossed } from "lucide-react";
+import { Check, Coffee } from "lucide-react";
 
 interface FuelCardProps {
   time: string;
@@ -15,13 +15,13 @@ const FuelCard = ({ time, title, description, calories, logged, onLog }: FuelCar
     <motion.div
       layout
       className={`rounded-lg bg-card border p-4 transition-colors duration-150 ${
-        logged ? "border-nutrition/40 glow-nutrition" : "border-border"
+        logged ? "border-nutrition/40 glow-nutrition" : "border-border neon-border"
       }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <UtensilsCrossed className="h-4 w-4 text-nutrition shrink-0" />
+            <Coffee className="h-4 w-4 text-nutrition shrink-0" />
             <span className="font-display text-xs font-medium text-muted-foreground">{time}</span>
           </div>
           <h3 className="font-display font-semibold text-foreground text-sm truncate">{title}</h3>
