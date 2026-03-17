@@ -107,7 +107,12 @@ const ShiftDashboard = ({ startTime, endTime, onBack }: ShiftDashboardProps) => 
         ))}
       </div>
 
-      <p className="text-center text-xs text-muted-foreground mt-8 mb-4">
+      {/* Nutrition Summary */}
+      <div className="mt-6 mb-4">
+        <NutritionSummary totalCalories={totalCalories} loggedCalories={loggedCalories} />
+      </div>
+
+      <p className="text-center text-xs text-muted-foreground mt-4 mb-4">
         Tap ✓ to log each item as you go
       </p>
     </motion.div>
