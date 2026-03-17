@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Moon } from "lucide-react";
-import { generateSchedule, type ScheduleItem } from "@/lib/schedule";
+import { generateSchedule, type ScheduleItem, type DietType } from "@/lib/schedule";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
