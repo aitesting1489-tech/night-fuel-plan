@@ -6,6 +6,7 @@ import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
+import NutritionSummary from "./NutritionSummary";
 
 interface ShiftDashboardProps {
   startTime: string;
