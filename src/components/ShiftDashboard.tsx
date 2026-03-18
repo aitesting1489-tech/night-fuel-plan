@@ -17,7 +17,7 @@ interface ShiftDashboardProps {
   onBack: () => void;
 }
 
-const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProps) => {
+const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
   const schedule = useMemo(() => generateSchedule(startTime, endTime, diet), [startTime, endTime, diet]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
 
