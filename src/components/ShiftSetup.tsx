@@ -124,7 +124,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
         </div>
 
         <button
-          onClick={() => onGenerate(start, end, diet)}
+          onClick={() => onGenerate(start, end, diet, shiftName)}
           className="w-full rounded-xl bg-primary py-3 px-4 font-display font-semibold text-sm text-primary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-primary"
         >
           Generate Schedule <ArrowRight className="h-4 w-4" />
