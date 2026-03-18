@@ -8,9 +8,9 @@ interface ShiftSetupProps {
 }
 
 const presets = [
-  { label: "Evening", start: "18:00", end: "02:00" },
-  { label: "Night", start: "22:00", end: "06:00" },
-  { label: "Graveyard", start: "00:00", end: "08:00" },
+  { label: "Morning", start: "07:00", end: "15:00" },
+  { label: "Evening", start: "15:00", end: "23:00" },
+  { label: "Night", start: "23:00", end: "07:00" },
 ];
 
 const diets: Array<{ value: DietType; label: string; icon: typeof Leaf }> = [
