@@ -33,11 +33,15 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
     >
       <div className="w-full max-w-sm space-y-8">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-energy/10 mb-2">
-            <Moon className="h-7 w-7 text-energy" />
-          </div>
+          <motion.div
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary/15 mb-2"
+          >
+            <Moon className="h-7 w-7 text-primary" />
+          </motion.div>
           <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">LunarFuel</h1>
-          <p className="text-muted-foreground text-sm">Fuel your night shift. Set your hours to generate a custom schedule.</p>
+          <p className="text-muted-foreground text-sm font-light">Fuel your shift with gentle nourishment. Set your hours below.</p>
         </div>
 
         <div className="space-y-3">
@@ -47,10 +51,10 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
               <button
                 key={p.label}
                 onClick={() => { setStart(p.start); setEnd(p.end); }}
-                className={`rounded-lg border px-3 py-2 text-xs font-display font-medium transition-all duration-150 active:scale-95 ${
+                className={`rounded-xl border px-3 py-2.5 text-xs font-display font-medium transition-all duration-200 active:scale-95 ${
                   start === p.start && end === p.end
-                    ? "border-energy/50 bg-energy/10 text-energy"
-                    : "border-border bg-card text-muted-foreground hover:border-energy/30"
+                    ? "border-primary/50 bg-primary/10 text-primary glow-primary"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-primary/5"
                 }`}
               >
                 {p.label}
@@ -68,7 +72,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
                 type="time"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
-                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-2 focus:ring-energy/50"
+                className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
             <div className="space-y-1.5">
@@ -77,7 +81,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
                 type="time"
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
-                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-2 focus:ring-energy/50"
+                className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground font-display focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
           </div>
@@ -92,10 +96,10 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
                 <button
                   key={d.value}
                   onClick={() => setDiet(d.value)}
-                  className={`rounded-lg border px-3 py-2.5 text-xs font-display font-medium transition-all duration-150 active:scale-95 flex items-center gap-2 ${
+                  className={`rounded-xl border px-3 py-2.5 text-xs font-display font-medium transition-all duration-200 active:scale-95 flex items-center gap-2 ${
                     diet === d.value
-                      ? "border-energy/50 bg-energy/10 text-energy"
-                      : "border-border bg-card text-muted-foreground hover:border-energy/30"
+                      ? "border-primary/50 bg-primary/10 text-primary glow-primary"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-primary/5"
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -108,7 +112,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
 
         <button
           onClick={() => onGenerate(start, end, diet)}
-          className="w-full rounded-lg bg-energy py-3 px-4 font-display font-semibold text-sm text-primary-foreground flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all duration-150 glow-primary"
+          className="w-full rounded-xl bg-primary py-3 px-4 font-display font-semibold text-sm text-primary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-primary"
         >
           Generate Schedule <ArrowRight className="h-4 w-4" />
         </button>

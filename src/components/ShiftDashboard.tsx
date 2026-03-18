@@ -50,19 +50,19 @@ const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProp
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.15 }}
+      transition={{ duration: 0.2 }}
       className="min-h-screen px-4 py-6 max-w-lg mx-auto"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={onBack}
-          className="h-9 w-9 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-95"
+          className="h-9 w-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors active:scale-95"
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
         <div className="flex items-center gap-2">
-          <Moon className="h-4 w-4 text-energy" />
+          <Moon className="h-4 w-4 text-primary" />
           <span className="font-display text-sm font-semibold text-foreground">
             {startTime} — {endTime}
           </span>
@@ -86,7 +86,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProp
             key={item.id}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04, duration: 0.15 }}
+            transition={{ delay: i * 0.04, duration: 0.2 }}
           >
             {item.type === "fuel" ? (
               <FuelCard
@@ -119,7 +119,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProp
         <ProUpsell />
       </div>
 
-      <p className="text-center text-xs text-muted-foreground mt-4 mb-4">
+      <p className="text-center text-xs text-muted-foreground mt-4 mb-4 font-light">
         Tap ✓ to log each item as you go
       </p>
     </motion.div>
