@@ -57,38 +57,32 @@ export function generateSchedule(startTime: string, endTime: string, diet: DietT
   const start = parseTime(startTime);
   let end = parseTime(endTime);
   if (end <= start) end += 1440;
-  const duration = end - start;
 
   const meals = mealsByDiet[diet];
   const items: ScheduleItem[] = [];
   let id = 0;
 
-  // Pre-shift meal 30 min before
-  items.push({ id: String(id++), time: formatTime(start - 30), type: "fuel", ...meals[0] });
+  const duration = end - start;
+  const mealTimes = [
+    start - 30,                          // Pre-shift meal
+    start + Math.floor(duration * 0.4),  // Mid-shift meal
+    start + Math.floor(duration * 0.7),  // Late shift snack
+    end + 15,                            // Post-shift recovery
+  ];
 
-  // Hydration at start
-  items.push({ id: String(id++), time: formatTime(start), type: "drip", amount: 350 });
+  // Place each meal followed by a drip card
+  meals.forEach((meal, i) => {
+    items.push({ id: String(id++), time: formatTime(mealTimes[i]), type: "fuel", ...meal });
 
-  // Mid-shift meal
-  const mid = start + Math.floor(duration * 0.4);
-  items.push({ id: String(id++), time: formatTime(mid), type: "fuel", ...meals[1] });
-
-  // Hydration every ~90 min during shift
-  const hydrationInterval = 90;
-  for (let t = start + hydrationInterval; t < end; t += hydrationInterval) {
-    if (Math.abs(t - mid) > 15) {
-      items.push({ id: String(id++), time: formatTime(t), type: "drip", amount: 250 });
+    // Drip after each meal: space them evenly, last one lands at endTime
+    if (i < meals.length - 1) {
+      const dripTime = mealTimes[i] + 30; // 30 min after meal
+      items.push({ id: String(id++), time: formatTime(dripTime), type: "drip", amount: 300 });
+    } else {
+      // Final drip at shift end time
+      items.push({ id: String(id++), time: formatTime(end), type: "drip", amount: 300 });
     }
-  }
-
-  // Late shift snack
-  items.push({ id: String(id++), time: formatTime(start + Math.floor(duration * 0.7)), type: "fuel", ...meals[2] });
-
-  // Post-shift recovery
-  items.push({ id: String(id++), time: formatTime(end + 15), type: "fuel", ...meals[3] });
-
-  // Final hydration
-  items.push({ id: String(id++), time: formatTime(end), type: "drip", amount: 300 });
+  });
 
   return items;
 }
