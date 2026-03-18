@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import type { DietType } from "@/lib/schedule";
 
 interface ShiftSetupProps {
-  onGenerate: (start: string, end: string, diet: DietType) => void;
+  onGenerate: (start: string, end: string, diet: DietType, shiftName: string) => void;
 }
 
 const presets = [
@@ -24,6 +24,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
   const [start, setStart] = useState("22:00");
   const [end, setEnd] = useState("06:00");
   const [diet, setDiet] = useState<DietType>("standard");
+  const [shiftName, setShiftName] = useState("");
 
   return (
     <motion.div
@@ -42,6 +43,18 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
           </motion.div>
           <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">LunarFuel</h1>
           <p className="text-muted-foreground text-sm font-light">Fuel your shift with gentle nourishment. Set your hours below.</p>
+        </div>
+
+        {/* Shift Name */}
+        <div className="space-y-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Shift name</p>
+          <input
+            type="text"
+            value={shiftName}
+            onChange={(e) => setShiftName(e.target.value)}
+            placeholder="e.g. Monday Night, ER Rotation…"
+            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground font-body placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
         </div>
 
         <div className="space-y-3">
@@ -111,7 +124,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
         </div>
 
         <button
-          onClick={() => onGenerate(start, end, diet)}
+          onClick={() => onGenerate(start, end, diet, shiftName)}
           className="w-full rounded-xl bg-primary py-3 px-4 font-display font-semibold text-sm text-primary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-primary"
         >
           Generate Schedule <ArrowRight className="h-4 w-4" />

@@ -13,10 +13,11 @@ interface ShiftDashboardProps {
   startTime: string;
   endTime: string;
   diet: DietType;
+  shiftName?: string;
   onBack: () => void;
 }
 
-const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProps) => {
+const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
   const schedule = useMemo(() => generateSchedule(startTime, endTime, diet), [startTime, endTime, diet]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
 
@@ -61,11 +62,16 @@ const ShiftDashboard = ({ startTime, endTime, diet, onBack }: ShiftDashboardProp
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-center">
           <Moon className="h-4 w-4 text-primary" />
-          <span className="font-display text-sm font-semibold text-foreground">
-            {startTime} — {endTime}
-          </span>
+          <div className="flex flex-col">
+            {shiftName && (
+              <span className="font-display text-xs font-semibold text-foreground">{shiftName}</span>
+            )}
+            <span className="font-display text-sm font-semibold text-muted-foreground">
+              {startTime} — {endTime}
+            </span>
+          </div>
         </div>
         <div className="w-9" />
       </div>
