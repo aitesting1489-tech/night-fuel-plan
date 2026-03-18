@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Orbitron"', 'system-ui', 'sans-serif'],
-        body: ['"JetBrains Mono"', 'monospace', 'system-ui'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        body: ['"Nunito"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -69,10 +69,15 @@ export default {
           from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
       },
       animation: {
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
-        "slide-up": "slide-up 0.15s ease-out",
+        "pulse-glow": "pulse-glow 3s ease-in-out infinite",
+        "slide-up": "slide-up 0.2s ease-out",
+        "float": "float 4s ease-in-out infinite",
       },
     },
   },

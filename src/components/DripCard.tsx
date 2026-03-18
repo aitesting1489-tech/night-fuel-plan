@@ -12,7 +12,7 @@ const DripCard = ({ time, amount, logged, onLog }: DripCardProps) => {
   return (
     <motion.div
       layout
-      className={`rounded-lg bg-card border p-4 transition-colors duration-150 ${
+      className={`rounded-xl bg-card/80 dreamy-blur border p-4 transition-all duration-200 ${
         logged ? "border-hydration/40 glow-hydration" : "border-border neon-border"
       }`}
     >
@@ -26,10 +26,10 @@ const DripCard = ({ time, amount, logged, onLog }: DripCardProps) => {
         </div>
         <button
           onClick={onLog}
-          className={`shrink-0 h-10 w-10 rounded-lg flex items-center justify-center transition-all duration-150 ${
+          className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
             logged
               ? "bg-hydration/20 text-hydration"
-              : "bg-muted text-muted-foreground hover:bg-muted/80 active:scale-95"
+              : "bg-muted text-muted-foreground hover:bg-hydration/10 hover:text-hydration active:scale-95"
           }`}
         >
           <Check className="h-5 w-5" />
