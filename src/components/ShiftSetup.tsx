@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import type { DietType } from "@/lib/schedule";
 
 interface ShiftSetupProps {
-  onGenerate: (start: string, end: string, diet: DietType) => void;
+  onGenerate: (start: string, end: string, diet: DietType, shiftName: string) => void;
 }
 
 const presets = [
