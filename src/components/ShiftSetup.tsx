@@ -24,6 +24,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
   const [start, setStart] = useState("22:00");
   const [end, setEnd] = useState("06:00");
   const [diet, setDiet] = useState<DietType>("standard");
+  const [shiftName, setShiftName] = useState("");
 
   return (
     <motion.div
