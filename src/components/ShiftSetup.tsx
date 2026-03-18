@@ -45,6 +45,18 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
           <p className="text-muted-foreground text-sm font-light">Fuel your shift with gentle nourishment. Set your hours below.</p>
         </div>
 
+        {/* Shift Name */}
+        <div className="space-y-3">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Shift name</p>
+          <input
+            type="text"
+            value={shiftName}
+            onChange={(e) => setShiftName(e.target.value)}
+            placeholder="e.g. Monday Night, ER Rotation…"
+            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground font-body placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
+
         <div className="space-y-3">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Quick presets</p>
           <div className="grid grid-cols-3 gap-2">
