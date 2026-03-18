@@ -13,6 +13,7 @@ interface ShiftDashboardProps {
   startTime: string;
   endTime: string;
   diet: DietType;
+  shiftName?: string;
   onBack: () => void;
 }
 
