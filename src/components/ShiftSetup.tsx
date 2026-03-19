@@ -41,7 +41,7 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
           >
             <Moon className="h-7 w-7 text-primary" />
           </motion.div>
-          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">LunarFuel</h1>
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">Circadia</h1>
           <p className="text-muted-foreground text-sm font-light">Fuel your shift with gentle nourishment. Set your hours below.</p>
         </div>
 

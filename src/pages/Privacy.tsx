@@ -54,13 +54,13 @@ const Privacy = () => {
         <section className="rounded-xl border border-border bg-card/80 dreamy-blur p-4 space-y-2">
           <h2 className="font-display text-sm font-semibold text-foreground">Sensitive Information</h2>
           <p className="text-xs text-muted-foreground font-light leading-relaxed">
-            We do not collect medical records or biometric data. LunarFuel only processes the shift schedule and dietary preference information you voluntarily provide.
+            We do not collect medical records or biometric data. Circadia only processes the shift schedule and dietary preference information you voluntarily provide.
           </p>
         </section>
       </div>
 
       <p className="text-center text-[10px] text-muted-foreground/50 mt-8 mb-4 font-light">
-        © 2026 LunarFuel. All rights reserved.
+        © 2026 Circadia. All rights reserved.
       </p>
     </motion.div>
   );
