@@ -11,18 +11,18 @@ const Index = () => {
     <>
       <Starfield />
 
-  if (!shift) {
-    return <ShiftSetup onGenerate={(start, end, diet, shiftName) => setShift({ start, end, diet, name: shiftName })} />;
-  }
-
-  return (
-    <ShiftDashboard
-      startTime={shift.start}
-      endTime={shift.end}
-      diet={shift.diet}
-      shiftName={shift.name}
-      onBack={() => setShift(null)}
-    />
+      {!shift ? (
+        <ShiftSetup onGenerate={(start, end, diet, shiftName) => setShift({ start, end, diet, name: shiftName })} />
+      ) : (
+        <ShiftDashboard
+          startTime={shift.start}
+          endTime={shift.end}
+          diet={shift.diet}
+          shiftName={shift.name}
+          onBack={() => setShift(null)}
+        />
+      )}
+    </>
   );
 };
 
