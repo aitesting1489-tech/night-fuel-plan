@@ -75,7 +75,7 @@ const Terms = () => {
       </div>
 
       <p className="text-center text-[10px] text-muted-foreground/50 mt-8 mb-4 font-light">
-        © 2026 LunarFuel. All rights reserved.
+        © 2026 Circadia. All rights reserved.
       </p>
     </motion.div>
   );

@@ -114,7 +114,7 @@ const ProUpsell = () => {
 
               <div className="rounded-xl bg-muted/40 p-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground font-body">LunarFuel Pro Guide</span>
+                  <span className="text-muted-foreground font-body">Circadia Pro Guide</span>
                   <span className="text-foreground font-display font-semibold">$4.99</span>
                 </div>
                 <div className="border-t border-border pt-2 flex justify-between text-sm">
