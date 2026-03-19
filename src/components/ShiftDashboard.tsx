@@ -8,6 +8,7 @@ import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
 import NutritionSummary from "./NutritionSummary";
 import ProUpsell from "./ProUpsell";
+import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
 
