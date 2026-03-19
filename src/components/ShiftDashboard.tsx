@@ -8,6 +8,7 @@ import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
 import NutritionSummary from "./NutritionSummary";
 import ProUpsell from "./ProUpsell";
+import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
 
@@ -159,7 +160,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       )}
 
       {/* Pro Upsell */}
-      <div className="mt-4 mb-4">
+      <div className="mt-4 space-y-3 mb-4">
+        <ProFeaturesModal />
         <ProUpsell />
       </div>
 
