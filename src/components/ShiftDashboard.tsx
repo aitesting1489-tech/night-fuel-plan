@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Moon, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
+import { generateProtocolPdf } from "@/lib/generatePdf";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
@@ -136,13 +137,24 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <NutritionSummary totalCalories={totalCalories} loggedCalories={loggedCalories} />
       </div>
 
+      {/* Generate PDF */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        onClick={() => generateProtocolPdf(startTime, endTime, diet, shiftName || "", schedule)}
+        className="w-full mt-5 rounded-xl bg-primary/10 border border-primary/30 py-3 px-4 font-display font-semibold text-sm text-primary flex items-center justify-center gap-2 hover:bg-primary/20 active:scale-[0.98] transition-all duration-200 glow-primary"
+      >
+        <FileDown className="h-4 w-4" />
+        Generate My Pro Protocol
+      </motion.button>
+
       {/* Finish Shift Button */}
       {!shiftFinished && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={handleFinishShift}
-          className="w-full mt-5 rounded-xl border border-primary/30 bg-primary/10 py-3 px-4 font-display font-semibold text-sm text-primary flex items-center justify-center gap-2 hover:bg-primary/20 active:scale-[0.98] transition-all duration-200"
+          className="w-full mt-3 rounded-xl border border-border bg-secondary py-3 px-4 font-display font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all duration-200"
         >
           <CheckCircle2 className="h-4 w-4" />
           Mark Shift as Finished
