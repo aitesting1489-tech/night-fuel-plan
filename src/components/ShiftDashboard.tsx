@@ -1,13 +1,15 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Moon } from "lucide-react";
-import { generateSchedule, type ScheduleItem, type DietType } from "@/lib/schedule";
+import { ArrowLeft, Moon, CheckCircle2 } from "lucide-react";
+import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
 import NutritionSummary from "./NutritionSummary";
 import ProUpsell from "./ProUpsell";
+import ShiftTimeline from "./ShiftTimeline";
+import DecompressionBreakfast from "./DecompressionBreakfast";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -18,8 +20,14 @@ interface ShiftDashboardProps {
 }
 
 const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
-  const schedule = useMemo(() => generateSchedule(startTime, endTime, diet), [startTime, endTime, diet]);
+  const schedule = useMemo(
+    () => generateSchedule(startTime, endTime, diet).filter((s) => s.type === "fuel" || s.type === "drip"),
+    [startTime, endTime, diet]
+  );
+  const phases = useMemo(() => generatePhases(startTime, endTime), [startTime, endTime]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
+  const [shiftFinished, setShiftFinished] = useState(false);
+  const [breakfastDismissed, setBreakfastDismissed] = useState(false);
 
   const toggleLog = (id: string) => {
     setLogged((prev) => {
@@ -46,6 +54,10 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     ((loggedFuel / Math.max(totalFuel.length, 1)) * 60) +
     ((hydrationLogged / Math.max(hydrationTarget, 1)) * 40)
   );
+
+  const handleFinishShift = () => {
+    setShiftFinished(true);
+  };
 
   return (
     <motion.div
@@ -76,13 +88,16 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <div className="w-9" />
       </div>
 
+      {/* Timeline */}
+      <ShiftTimeline phases={phases} activePhase={shiftFinished ? 4 : 2} />
+
       {/* Gauges */}
       <div className="space-y-3 mb-6">
         <EnergyGauge level={energyLevel} />
         <HydrationGauge current={hydrationLogged} target={hydrationTarget} />
       </div>
 
-      {/* Timeline */}
+      {/* Schedule Items */}
       <div className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
           Your Shift Schedule
@@ -120,6 +135,29 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <NutritionSummary totalCalories={totalCalories} loggedCalories={loggedCalories} />
       </div>
 
+      {/* Finish Shift Button */}
+      {!shiftFinished && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={handleFinishShift}
+          className="w-full mt-5 rounded-xl border border-primary/30 bg-primary/10 py-3 px-4 font-display font-semibold text-sm text-primary flex items-center justify-center gap-2 hover:bg-primary/20 active:scale-[0.98] transition-all duration-200"
+        >
+          <CheckCircle2 className="h-4 w-4" />
+          Mark Shift as Finished
+        </motion.button>
+      )}
+
+      {shiftFinished && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-xs text-primary font-display font-semibold mt-5"
+        >
+          ✨ Shift Complete — Great work!
+        </motion.p>
+      )}
+
       {/* Pro Upsell */}
       <div className="mt-4 mb-4">
         <ProUpsell />
@@ -128,6 +166,13 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       <p className="text-center text-xs text-muted-foreground mt-4 mb-4 font-light">
         Tap ✓ to log each item as you go
       </p>
+
+      {/* Decompression Breakfast - only shows after finishing */}
+      <DecompressionBreakfast
+        show={shiftFinished && !breakfastDismissed}
+        diet={diet}
+        onDismiss={() => setBreakfastDismissed(true)}
+      />
     </motion.div>
   );
 };
