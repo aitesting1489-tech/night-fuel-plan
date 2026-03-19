@@ -160,7 +160,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       )}
 
       {/* Pro Upsell */}
-      <div className="mt-4 mb-4">
+      <div className="mt-4 space-y-3 mb-4">
+        <ProFeaturesModal />
         <ProUpsell />
       </div>
 
