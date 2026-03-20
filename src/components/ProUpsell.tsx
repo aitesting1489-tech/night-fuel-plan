@@ -71,11 +71,22 @@ const ProUpsell = () => {
 
           {!unlocked && (
             <button
-              onClick={() => setShowCheckout(true)}
-              className="w-full rounded-xl py-3 px-4 font-display font-semibold text-sm bg-secondary text-secondary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-pink"
+              onClick={handleCheckout}
+              disabled={processing}
+              className="w-full rounded-xl py-3 px-4 font-display font-semibold text-sm bg-secondary text-secondary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-pink disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Sparkles className="h-4 w-4" />
-              Unlock Pro — $4.99
+              {processing ? (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                  className="h-4 w-4 border-2 border-secondary-foreground/30 border-t-secondary-foreground rounded-full"
+                />
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Unlock Pro — $9.99
+                </>
+              )}
             </button>
           )}
 
