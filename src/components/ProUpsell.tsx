@@ -1,21 +1,27 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Download, Sparkles, X, CreditCard, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { Download, Sparkles, Check } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProUpsell = () => {
   const [unlocked, setUnlocked] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  const handleMockCheckout = () => {
+  const handleCheckout = async () => {
     setProcessing(true);
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      toast.error("Checkout failed. Please try again.");
+      console.error(err);
+    } finally {
       setProcessing(false);
-      setShowCheckout(false);
-      setUnlocked(true);
-      toast.success("Pro unlocked! Your PDF guide is ready.");
-    }, 2000);
+    }
   };
 
   const handleDownload = () => {
