@@ -43,6 +43,17 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     });
   };
 
+  const allChecked = schedule.length > 0 && logged.size === schedule.length;
+
+  useEffect(() => {
+    if (allChecked && !prevAllChecked.current) {
+      setAllCheckedBurst(true);
+      const timer = setTimeout(() => setAllCheckedBurst(false), 100);
+      return () => clearTimeout(timer);
+    }
+    prevAllChecked.current = allChecked;
+  }, [allChecked]);
+
   const totalFuel = schedule.filter((s) => s.type === "fuel");
   const totalDrip = schedule.filter((s) => s.type === "drip");
   const loggedFuelItems = totalFuel.filter((s) => logged.has(s.id));
