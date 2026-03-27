@@ -12,6 +12,7 @@ import ProUpsell from "./ProUpsell";
 import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
+import SparkleBurst from "./SparkleBurst";
 
 interface ShiftDashboardProps {
   startTime: string;
