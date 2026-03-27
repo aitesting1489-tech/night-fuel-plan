@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
+import { trackEvent } from "@/lib/analytics";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
