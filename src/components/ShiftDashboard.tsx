@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
@@ -12,6 +12,7 @@ import ProUpsell from "./ProUpsell";
 import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
+import SparkleBurst from "./SparkleBurst";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -30,6 +31,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   const [logged, setLogged] = useState<Set<string>>(new Set());
   const [shiftFinished, setShiftFinished] = useState(false);
   const [breakfastDismissed, setBreakfastDismissed] = useState(false);
+  const [allCheckedBurst, setAllCheckedBurst] = useState(false);
+  const prevAllChecked = useRef(false);
 
   const toggleLog = (id: string) => {
     setLogged((prev) => {
@@ -39,6 +42,17 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       return next;
     });
   };
+
+  const allChecked = schedule.length > 0 && logged.size === schedule.length;
+
+  useEffect(() => {
+    if (allChecked && !prevAllChecked.current) {
+      setAllCheckedBurst(true);
+      const timer = setTimeout(() => setAllCheckedBurst(false), 100);
+      return () => clearTimeout(timer);
+    }
+    prevAllChecked.current = allChecked;
+  }, [allChecked]);
 
   const totalFuel = schedule.filter((s) => s.type === "fuel");
   const totalDrip = schedule.filter((s) => s.type === "drip");
@@ -68,6 +82,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       transition={{ duration: 0.2 }}
       className="min-h-screen px-4 py-6 max-w-lg mx-auto"
     >
+      <SparkleBurst trigger={allCheckedBurst} />
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
