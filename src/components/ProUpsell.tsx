@@ -11,6 +11,7 @@ const ProUpsell = () => {
 
   const handleCheckout = async () => {
     setProcessing(true);
+    trackEvent("begin_checkout", { value: 9.99, currency: "USD" });
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout");
       if (error) throw error;
