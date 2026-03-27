@@ -73,6 +73,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   );
 
   const handleFinishShift = () => {
+    trackEvent("shift_finished", { startTime, endTime, diet, itemsLogged: logged.size, totalItems: schedule.length });
     setShiftFinished(true);
   };
 
