@@ -2,45 +2,38 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { useAuth } from "@/contexts/AuthContext";
 import Starfield from "@/components/Starfield";
 
 const Success = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { checkSubscription } = useAuth();
   const [verifying, setVerifying] = useState(true);
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
     if (!sessionId) {
-      // No session_id — might be a direct visit or old link
-      const alreadyPro = localStorage.getItem("circadia_pro") === "true";
-      setVerified(alreadyPro);
       setVerifying(false);
       return;
     }
 
     const verify = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("verify-payment", {
-          body: { session_id: sessionId },
-        });
-        if (!error && data?.paid) {
-          localStorage.setItem("circadia_pro", "true");
-          setVerified(true);
-          trackEvent("purchase", { value: 9.99, currency: "USD", transaction_id: sessionId });
-        }
+        await checkSubscription();
+        setVerified(true);
+        trackEvent("purchase", { value: 9.99, currency: "USD", transaction_id: sessionId });
       } catch (err) {
-        console.error("Payment verification failed:", err);
+        console.error("Subscription check failed:", err);
       } finally {
         setVerifying(false);
       }
     };
 
     verify();
-  }, [searchParams]);
+  }, [searchParams, checkSubscription]);
 
   return (
     <>
@@ -63,10 +56,10 @@ const Success = () => {
                 <Loader2 className="h-12 w-12 text-primary animate-spin" />
               </div>
               <h1 className="font-display text-xl font-bold text-foreground">
-                Verifying Payment...
+                Verifying Subscription...
               </h1>
               <p className="text-sm text-muted-foreground font-light">
-                Confirming your purchase with Stripe.
+                Confirming your subscription with Stripe.
               </p>
             </>
           ) : verified ? (
@@ -75,10 +68,10 @@ const Success = () => {
                 <CheckCircle2 className="h-12 w-12 text-primary" />
               </div>
               <h1 className="font-display text-xl font-bold text-foreground">
-                Pro Unlocked! 🎉
+                Welcome to Pro! 🎉
               </h1>
               <p className="text-sm text-muted-foreground font-light">
-                Your payment was successful. You now have access to the Circadia Pro Guide with personalized meal prep, grocery lists, and macro breakdowns.
+                Your subscription is active. You now have access to all Circadia Pro features including personalized meal prep, grocery lists, and macro breakdowns.
               </p>
             </>
           ) : (
@@ -87,10 +80,10 @@ const Success = () => {
                 <CheckCircle2 className="h-12 w-12 text-muted-foreground" />
               </div>
               <h1 className="font-display text-xl font-bold text-foreground">
-                Payment Not Confirmed
+                Subscription Not Confirmed
               </h1>
               <p className="text-sm text-muted-foreground font-light">
-                We couldn't verify your payment. If you believe this is an error, please try again or contact support.
+                We couldn't verify your subscription. If you just completed checkout, please wait a moment and refresh. Contact support if the issue persists.
               </p>
             </>
           )}

@@ -1,28 +1,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Download, Sparkles, Check } from "lucide-react";
+import { Lock, Download, Sparkles, Check, CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ProUpsell = () => {
-  const [unlocked, setUnlocked] = useState(() => localStorage.getItem("circadia_pro") === "true");
+  const { user, isProSubscriber } = useAuth();
   const [processing, setProcessing] = useState(false);
 
   const handleCheckout = async () => {
+    if (!user) {
+      toast.error("Please sign in to subscribe");
+      return;
+    }
     setProcessing(true);
     trackEvent("begin_checkout", { value: 9.99, currency: "USD" });
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout");
       if (error) throw error;
       if (data?.url) {
-        window.location.href = data.url;
+        window.open(data.url, "_blank");
       }
     } catch (err: any) {
       toast.error("Checkout failed. Please try again.");
       console.error(err);
     } finally {
       setProcessing(false);
+    }
+  };
+
+  const handleManage = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err) {
+      toast.error("Could not open subscription management.");
+      console.error(err);
     }
   };
 
@@ -51,16 +69,16 @@ const ProUpsell = () => {
         </p>
 
         <div className="relative">
-          {!unlocked && (
+          {!isProSubscriber && (
             <div className="absolute inset-0 z-10 rounded-xl backdrop-blur-sm bg-background/40 flex items-center justify-center">
               <Lock className="h-5 w-5 text-muted-foreground" />
             </div>
           )}
           <button
-            onClick={unlocked ? handleDownload : undefined}
-            disabled={!unlocked}
+            onClick={isProSubscriber ? handleDownload : undefined}
+            disabled={!isProSubscriber}
             className={`w-full rounded-xl py-3 px-4 font-display font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 ${
-              unlocked
+              isProSubscriber
                 ? "bg-primary text-primary-foreground hover:brightness-105 active:scale-[0.98] glow-primary"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
@@ -70,10 +88,10 @@ const ProUpsell = () => {
           </button>
         </div>
 
-        {!unlocked && (
+        {!isProSubscriber && (
           <button
             onClick={handleCheckout}
-            disabled={processing}
+            disabled={processing || !user}
             className="w-full rounded-xl py-3 px-4 font-display font-semibold text-sm bg-secondary text-secondary-foreground flex items-center justify-center gap-2 hover:brightness-105 active:scale-[0.98] transition-all duration-200 glow-pink disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {processing ? (
@@ -85,16 +103,25 @@ const ProUpsell = () => {
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                Unlock Pro — $9.99
+                Subscribe Pro — $9.99/mo
               </>
             )}
           </button>
         )}
 
-        {unlocked && (
-          <div className="flex items-center justify-center gap-2 text-primary">
-            <Check className="h-4 w-4" />
-            <span className="font-display text-xs font-medium neon-text">Pro Unlocked</span>
+        {isProSubscriber && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-center gap-2 text-primary">
+              <Check className="h-4 w-4" />
+              <span className="font-display text-xs font-medium neon-text">Pro Active</span>
+            </div>
+            <button
+              onClick={handleManage}
+              className="w-full rounded-xl py-2 px-4 font-display text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <CreditCard className="h-3.5 w-3.5" />
+              Manage Subscription
+            </button>
           </div>
         )}
       </div>
