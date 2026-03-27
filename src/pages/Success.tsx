@@ -30,6 +30,7 @@ const Success = () => {
         if (!error && data?.paid) {
           localStorage.setItem("circadia_pro", "true");
           setVerified(true);
+          trackEvent("purchase", { value: 9.99, currency: "USD", transaction_id: sessionId });
         }
       } catch (err) {
         console.error("Payment verification failed:", err);
