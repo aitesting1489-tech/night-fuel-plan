@@ -6,7 +6,7 @@ import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
 import AuthPage from "@/pages/Auth";
-import { LogOut, Save, History, Settings } from "lucide-react";
+import { LogOut, Save, History, Settings, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNavigate } from "react-router-dom";
