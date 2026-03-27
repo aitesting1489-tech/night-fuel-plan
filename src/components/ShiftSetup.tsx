@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Moon, ArrowRight, Leaf, Vegan, Drumstick, Flame, BedDouble, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/analytics";
 import type { DietType } from "@/lib/schedule";
 
 export type ShiftMode = "on-shift" | "night-off";
