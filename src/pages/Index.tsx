@@ -25,6 +25,7 @@ interface SavedShift {
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [guest, setGuest] = useState(false);
   const [shift, setShift] = useState<{ start: string; end: string; diet: DietType; name: string; mode: ShiftMode } | null>(null);
   const [savedShifts, setSavedShifts] = useState<SavedShift[]>([]);
