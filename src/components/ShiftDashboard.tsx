@@ -82,6 +82,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       transition={{ duration: 0.2 }}
       className="min-h-screen px-4 py-6 max-w-lg mx-auto"
     >
+      <SparkleBurst trigger={allCheckedBurst} />
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <button
