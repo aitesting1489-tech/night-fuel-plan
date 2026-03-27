@@ -43,6 +43,7 @@ const App = () => (
               </Routes>
             </div>
             <Footer />
+            <InstallPrompt />
           </div>
         </BrowserRouter>
       </TooltipProvider>
