@@ -31,6 +31,8 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   const [logged, setLogged] = useState<Set<string>>(new Set());
   const [shiftFinished, setShiftFinished] = useState(false);
   const [breakfastDismissed, setBreakfastDismissed] = useState(false);
+  const [allCheckedBurst, setAllCheckedBurst] = useState(false);
+  const prevAllChecked = useRef(false);
 
   const toggleLog = (id: string) => {
     setLogged((prev) => {
