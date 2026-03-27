@@ -13,28 +13,30 @@ serve(async (req) => {
   }
 
   try {
+    const { session_id } = await req.json();
+    if (!session_id || typeof session_id !== "string") {
+      return new Response(JSON.stringify({ error: "session_id is required" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
 
-    const origin = req.headers.get("origin") || "https://night-fuel-plan.lovable.app";
+    const session = await stripe.checkout.sessions.retrieve(session_id);
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: "price_1TD3cMFntBt47Z5zncC25RrD",
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/`,
-    });
-
-    return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return new Response(
+      JSON.stringify({
+        paid: session.payment_status === "paid",
+        customer_email: session.customer_details?.email || null,
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
