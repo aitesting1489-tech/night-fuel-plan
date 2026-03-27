@@ -25,10 +25,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+
+        if (event === "SIGNED_IN" && session?.user) {
+          const user = session.user;
+          // Send welcome email for new signups (created within last 30 seconds)
+          const createdAt = new Date(user.created_at).getTime();
+          const now = Date.now();
+          if (now - createdAt < 30000) {
+            supabase.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "welcome",
+                recipientEmail: user.email,
+                idempotencyKey: `welcome-${user.id}`,
+                templateData: {
+                  displayName: user.user_metadata?.display_name || user.email?.split("@")[0],
+                },
+              },
+            }).catch(console.error);
+          }
+        }
       }
     );
 
