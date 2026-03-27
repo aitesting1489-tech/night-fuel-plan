@@ -4,6 +4,7 @@ import { Moon, Mail, Lock, User, ArrowRight, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { lovable } from "@/integrations/lovable/index";
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
