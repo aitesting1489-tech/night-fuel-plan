@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Moon, ArrowRight, Leaf, Vegan, Drumstick, Flame, BedDouble, Briefcase } from "lucide-react";
 import { motion } from "framer-motion";
+import { trackEvent } from "@/lib/analytics";
 import type { DietType } from "@/lib/schedule";
 
 export type ShiftMode = "on-shift" | "night-off";
@@ -176,8 +177,10 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
         <button
           onClick={() => {
             if (mode === "night-off") {
+              trackEvent("schedule_generated", { mode: "night-off", diet });
               onGenerate(bedtime, bedtime, diet, "Night Off", "night-off");
             } else {
+              trackEvent("schedule_generated", { mode: "on-shift", diet, start, end });
               onGenerate(start, end, diet, shiftName, "on-shift");
             }
           }}
