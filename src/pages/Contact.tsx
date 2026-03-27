@@ -32,12 +32,12 @@ const Contact = () => {
     setSubmitting(true);
     try {
       const id = crypto.randomUUID();
-      const { error } = await supabase.from("contact_submissions").insert({
+      const { error } = await supabase.from("contact_submissions" as any).insert({
         id,
         name: parsed.data.name,
         email: parsed.data.email,
         message: parsed.data.message,
-      });
+      } as any);
 
       if (error) throw error;
 
