@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Lock, Download, Sparkles, Check } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 
 const ProUpsell = () => {
   const [unlocked, setUnlocked] = useState(() => localStorage.getItem("circadia_pro") === "true");
@@ -10,6 +11,7 @@ const ProUpsell = () => {
 
   const handleCheckout = async () => {
     setProcessing(true);
+    trackEvent("begin_checkout", { value: 9.99, currency: "USD" });
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout");
       if (error) throw error;

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import Starfield from "@/components/Starfield";
 
 const Success = () => {
@@ -29,6 +30,7 @@ const Success = () => {
         if (!error && data?.paid) {
           localStorage.setItem("circadia_pro", "true");
           setVerified(true);
+          trackEvent("purchase", { value: 9.99, currency: "USD", transaction_id: sessionId });
         }
       } catch (err) {
         console.error("Payment verification failed:", err);
