@@ -159,7 +159,10 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        onClick={() => generateProtocolPdf(startTime, endTime, diet, shiftName || "", schedule)}
+        onClick={() => {
+          trackEvent("pdf_downloaded", { diet, shiftName: shiftName || "" });
+          generateProtocolPdf(startTime, endTime, diet, shiftName || "", schedule);
+        }}
         className="w-full mt-5 rounded-xl bg-primary/10 border border-primary/30 py-3 px-4 font-display font-semibold text-sm text-primary flex items-center justify-center gap-2 hover:bg-primary/20 active:scale-[0.98] transition-all duration-200 glow-primary"
       >
         <FileDown className="h-4 w-4" />
