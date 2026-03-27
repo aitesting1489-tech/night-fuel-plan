@@ -28,16 +28,24 @@ const FuelCard = ({ time, title, description, calories, logged, onLog }: FuelCar
           <p className="text-xs text-muted-foreground mt-0.5 font-light">{description}</p>
           <span className="text-xs text-primary font-medium">{calories} kcal</span>
         </div>
-        <button
+        <motion.button
           onClick={onLog}
-          className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
+          whileTap={{ scale: 0.85 }}
+          animate={logged ? { scale: [1, 1.25, 0.95, 1.05, 1] } : {}}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center transition-colors duration-200 ${
             logged
               ? "bg-primary/20 text-primary"
-              : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary active:scale-95"
+              : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
           }`}
         >
-          <Check className="h-5 w-5" />
-        </button>
+          <motion.div
+            animate={logged ? { rotate: [0, -10, 10, -5, 0] } : { rotate: 0 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+          >
+            <Check className="h-5 w-5" />
+          </motion.div>
+        </motion.button>
       </div>
     </motion.div>
   );
