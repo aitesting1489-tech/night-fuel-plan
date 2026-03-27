@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Lock, Download, Sparkles, Check } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 
 const ProUpsell = () => {
   const [unlocked, setUnlocked] = useState(() => localStorage.getItem("circadia_pro") === "true");
