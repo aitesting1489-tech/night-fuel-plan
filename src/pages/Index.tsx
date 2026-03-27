@@ -6,7 +6,7 @@ import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
 import AuthPage from "@/pages/Auth";
-import { LogOut, Save, History, Settings } from "lucide-react";
+import { LogOut, Save, History, Settings, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNavigate } from "react-router-dom";
@@ -118,6 +118,13 @@ const Index = () => {
               Saved
             </button>
           )}
+          <button
+            onClick={() => navigate("/contact")}
+            className="h-9 px-3 rounded-xl bg-card border border-border text-xs font-display text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Contact
+          </button>
           <button
             onClick={() => navigate("/profile")}
             className="h-9 px-3 rounded-xl bg-card border border-border text-xs font-display text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
