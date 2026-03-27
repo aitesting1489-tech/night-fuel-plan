@@ -6,9 +6,10 @@ import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
 import AuthPage from "@/pages/Auth";
-import { LogOut, Save, History } from "lucide-react";
+import { LogOut, Save, History, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { useNavigate } from "react-router-dom";
 import type { DietType } from "@/lib/schedule";
 import type { ShiftMode } from "@/components/ShiftSetup";
 
@@ -24,6 +25,7 @@ interface SavedShift {
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [guest, setGuest] = useState(false);
   const [shift, setShift] = useState<{ start: string; end: string; diet: DietType; name: string; mode: ShiftMode } | null>(null);
   const [savedShifts, setSavedShifts] = useState<SavedShift[]>([]);
@@ -116,6 +118,13 @@ const Index = () => {
               Saved
             </button>
           )}
+          <button
+            onClick={() => navigate("/profile")}
+            className="h-9 px-3 rounded-xl bg-card border border-border text-xs font-display text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
+          >
+            <Settings className="h-3.5 w-3.5" />
+            Profile
+          </button>
           <button
             onClick={signOut}
             className="h-9 px-3 rounded-xl bg-card border border-border text-xs font-display text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
