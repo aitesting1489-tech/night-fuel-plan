@@ -99,6 +99,9 @@
   "overrides": {
     "vite-plugin-pwa": {
       "vite": "$vite"
+    },
+    "lovable-tagger": {
+      "vite": "$vite"
     }
   }
 }
