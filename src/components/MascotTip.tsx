@@ -19,7 +19,7 @@ interface MascotTipProps {
   gender?: MascotGender;
 }
 
-function getMood(hydrationPercent: number, energyLevel: number, allChecked: boolean, shiftFinished: boolean): NoctisMood {
+export function getMood(hydrationPercent: number, energyLevel: number, allChecked: boolean, shiftFinished: boolean): NoctisMood {
   if (shiftFinished || allChecked) return "ecstatic";
   if (hydrationPercent >= 75 && energyLevel >= 60) return "happy";
   if (hydrationPercent >= 40 || energyLevel >= 40) return "neutral";
