@@ -29,6 +29,7 @@ interface ShiftDashboardProps {
 }
 
 const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
+  const navigate = useNavigate();
   const { settings: waterSettings, effectiveGoal } = useWaterSettings();
   const schedule = useMemo(
     () => generateSchedule(startTime, endTime, diet, waterSettings.cup_size_ml).filter((s) => s.type === "fuel" || s.type === "drip"),
