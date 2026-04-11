@@ -9,6 +9,7 @@ import { getMascotGender } from "@/lib/mascotPrefs";
 import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
+import SocialShare from "@/components/SocialShare";
 
 // ── Evolution stages ──
 const STAGES = [
@@ -290,6 +291,18 @@ const NoctisPet = () => {
           </motion.button>
 
           <p className="text-[10px] text-muted-foreground mt-2 animate-pulse">tap to pet!</p>
+        </div>
+
+        {/* Share progress */}
+        <div className="rounded-xl bg-card/80 dreamy-blur border border-border p-3 mb-4 flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold text-foreground">Share your progress</p>
+            <p className="text-[10px] text-muted-foreground">{stage.emoji} {stage.name} • {xp} XP</p>
+          </div>
+          <SocialShare
+            title="My Noctis Pet"
+            text={`🦇 My Noctis evolved to ${stage.name} ${stage.emoji} with ${xp} XP on Circadia! How far can yours grow?`}
+          />
         </div>
 
         {/* Evolution stage */}
