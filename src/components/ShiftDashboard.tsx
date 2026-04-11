@@ -312,6 +312,10 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       <MascotTip
         show={showMascotTip}
         onDismiss={() => setShowMascotTip(false)}
+        hydrationPercent={hydrationTarget > 0 ? (hydrationLogged / Math.max(hydrationTarget, effectiveGoal)) * 100 : 0}
+        energyLevel={energyLevel}
+        allChecked={allChecked}
+        shiftFinished={shiftFinished}
       />
     </motion.div>
   );
