@@ -1,5 +1,6 @@
-import { Bell, Droplets, UtensilsCrossed, Zap, Lightbulb } from "lucide-react";
+import { Bell, Droplets, UtensilsCrossed, Zap, Lightbulb, Volume2 } from "lucide-react";
 import type { WaterSettings } from "@/hooks/useWaterSettings";
+import { playNotificationSound } from "@/lib/notificationSounds";
 
 interface NotificationSettingsFormProps {
   settings: WaterSettings;
@@ -11,6 +12,7 @@ const toggles = [
   { key: "notify_meals" as const, label: "Meal Time Alerts", icon: UtensilsCrossed, desc: "Notifications when it's time to eat", color: "text-primary" },
   { key: "notify_phases" as const, label: "Shift Phase Alerts", icon: Zap, desc: "Caffeine cutoff & energy dip warnings", color: "text-amber-400" },
   { key: "notify_tips" as const, label: "Wellness Tips", icon: Lightbulb, desc: "Random health tips during your shift", color: "text-emerald-400" },
+  { key: "notify_sound" as const, label: "Sound Effects", icon: Volume2, desc: "Play a chime when alerts fire", color: "text-violet-400" },
 ];
 
 const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFormProps) => {
@@ -27,7 +29,14 @@ const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFo
         {toggles.map(({ key, label, icon: Icon, desc, color }) => (
           <button
             key={key}
-            onClick={() => onChange({ ...settings, [key]: !settings[key] })}
+            onClick={() => {
+              const newVal = !settings[key];
+              onChange({ ...settings, [key]: newVal });
+              // Preview sound when enabling sound toggle
+              if (key === "notify_sound" && newVal) {
+                playNotificationSound("meal");
+              }
+            }}
             className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-primary/5 active:scale-[0.99]"
           >
             <Icon className={`h-4 w-4 shrink-0 ${settings[key] ? color : "text-muted-foreground/40"}`} />

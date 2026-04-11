@@ -6,6 +6,7 @@ import {
   canSendPushNotifications,
   type ScheduledNotification,
 } from "@/lib/notifications";
+import { playNotificationSound, canPlaySound } from "@/lib/notificationSounds";
 import type { ScheduleItem } from "@/lib/schedule";
 import type { NotificationPreferences } from "@/hooks/useWaterSettings";
 
@@ -16,6 +17,7 @@ interface UseShiftNotificationsOptions {
   shiftEndTime: string;
   enabled: boolean;
   preferences?: NotificationPreferences;
+  soundEnabled?: boolean;
 }
 
 const tagToPreference: Record<string, keyof NotificationPreferences> = {
@@ -32,6 +34,7 @@ export function useShiftNotifications({
   shiftEndTime,
   enabled,
   preferences,
+  soundEnabled = true,
 }: UseShiftNotificationsOptions) {
   const notificationsRef = useRef<ScheduledNotification[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -53,6 +56,11 @@ export function useShiftNotifications({
 
       if (n.fireAt.getTime() <= now) {
         n.fired = true;
+
+        // Play sound effect
+        if (soundEnabled && canPlaySound()) {
+          playNotificationSound(n.tag);
+        }
 
         const icon = n.tag === "hydration" ? "💧" : n.tag === "meal" ? "🍽️" : n.tag === "tip" ? "🌙" : "⚡";
         toast(n.title, {
