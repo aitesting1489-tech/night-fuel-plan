@@ -1,0 +1,1 @@
+ALTER TABLE public.water_intake_settings ADD COLUMN IF NOT EXISTS notify_volume NUMERIC(3,2) NOT NULL DEFAULT 0.5;
