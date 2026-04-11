@@ -227,6 +227,9 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* Water Intake Settings */}
+          <WaterSettingsForm settings={waterSettings} onChange={setWaterSettings} />
+
           {/* Save Button */}
           <button
             onClick={handleSave}
