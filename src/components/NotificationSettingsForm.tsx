@@ -60,6 +60,40 @@ const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFo
           </button>
         ))}
       </div>
+
+      {/* Volume slider - only show when sound is enabled */}
+      {settings.notify_sound && (
+        <div className="rounded-xl border border-border bg-card/80 dreamy-blur p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-violet-400" />
+              <label className="text-xs font-medium text-foreground">Volume</label>
+            </div>
+            <span className="text-xs font-semibold text-muted-foreground">
+              {Math.round(settings.notify_volume * 100)}%
+            </span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            step={5}
+            value={Math.round(settings.notify_volume * 100)}
+            onChange={(e) => onChange({ ...settings, notify_volume: parseInt(e.target.value) / 100 })}
+            onMouseUp={() => {
+              if (settings.notify_sound) playNotificationSound("meal", settings.notify_volume);
+            }}
+            onTouchEnd={() => {
+              if (settings.notify_sound) playNotificationSound("meal", settings.notify_volume);
+            }}
+            className="w-full accent-violet-400"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>Silent</span>
+            <span>Max</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
