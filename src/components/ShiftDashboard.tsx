@@ -9,6 +9,7 @@ import { useWaterSettings } from "@/hooks/useWaterSettings";
 import { useShiftNotifications } from "@/hooks/useShiftNotifications";
 import { useHydrationLogger } from "@/hooks/useHydrationLogger";
 import { useAchievements } from "@/hooks/useAchievements";
+import { useFriendAlerts } from "@/hooks/useFriendAlerts";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
@@ -64,6 +65,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
 
   const { logHydration, unlogHydration } = useHydrationLogger();
   const { checkAndAward } = useAchievements(effectiveGoal);
+  useFriendAlerts(waterSettings.notify_sound, waterSettings.notify_volume, waterSettings.sound_theme as any);
 
   const toggleLog = (id: string) => {
     const item = schedule.find((s) => s.id === id);
