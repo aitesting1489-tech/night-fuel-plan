@@ -5,6 +5,8 @@ import { generateSchedule, generatePhases, type ScheduleItem, type DietType } fr
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
+import { useShiftNotifications } from "@/hooks/useShiftNotifications";
+import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
