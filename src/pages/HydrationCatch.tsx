@@ -221,6 +221,7 @@ const HydrationCatch = () => {
           {gameState === "over" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 dreamy-blur">
               <SparkleBurst trigger={gameState === "over"} intensity={getIntensity(score, [10, 25])} />
+              <p className="font-display text-lg font-bold text-foreground">Game Over!</p>
               <p className="text-2xl font-bold text-primary">{score}</p>
               {score >= highScore && score > 0 && (
                 <p className="text-xs font-semibold text-energy">🏆 New High Score!</p>
