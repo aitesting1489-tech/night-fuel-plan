@@ -6,6 +6,7 @@ import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
 import { useShiftNotifications } from "@/hooks/useShiftNotifications";
+import { useHydrationLogger } from "@/hooks/useHydrationLogger";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
@@ -57,11 +58,25 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     soundVolume: waterSettings.notify_volume,
   });
 
+  const { logHydration, unlogHydration } = useHydrationLogger();
+
   const toggleLog = (id: string) => {
+    const item = schedule.find((s) => s.id === id);
     setLogged((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        // Unlog hydration from DB
+        if (item?.type === "drip" && item.amount) {
+          unlogHydration(item.amount);
+        }
+      } else {
+        next.add(id);
+        // Log hydration to DB
+        if (item?.type === "drip" && item.amount) {
+          logHydration(item.amount);
+        }
+      }
       return next;
     });
   };
