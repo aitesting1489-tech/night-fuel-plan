@@ -21,6 +21,7 @@ import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
 import SparkleBurst from "./SparkleBurst";
+import MascotTip from "./MascotTip";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -43,7 +44,9 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   const [breakfastDismissed, setBreakfastDismissed] = useState(false);
   const [allCheckedBurst, setAllCheckedBurst] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [showMascotTip, setShowMascotTip] = useState(false);
   const prevAllChecked = useRef(false);
+  const mascotTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Full schedule (including caffeine-cutoff, crash-alert) for notifications
   const fullSchedule = useMemo(
@@ -96,6 +99,24 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     }
     prevAllChecked.current = allChecked;
   }, [allChecked]);
+
+  // Show mascot tip periodically during shift
+  useEffect(() => {
+    if (shiftFinished) return;
+    // Show first tip after 2 minutes, then every 20 minutes
+    mascotTimerRef.current = setTimeout(() => {
+      setShowMascotTip(true);
+    }, 2 * 60 * 1000);
+
+    const interval = setInterval(() => {
+      setShowMascotTip(true);
+    }, 20 * 60 * 1000);
+
+    return () => {
+      if (mascotTimerRef.current) clearTimeout(mascotTimerRef.current);
+      clearInterval(interval);
+    };
+  }, [shiftFinished]);
 
   const totalFuel = schedule.filter((s) => s.type === "fuel");
   const totalDrip = schedule.filter((s) => s.type === "drip");
@@ -285,6 +306,12 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         show={shiftFinished && !breakfastDismissed}
         diet={diet}
         onDismiss={() => setBreakfastDismissed(true)}
+      />
+
+      {/* Mascot Tip */}
+      <MascotTip
+        show={showMascotTip}
+        onDismiss={() => setShowMascotTip(false)}
       />
     </motion.div>
   );
