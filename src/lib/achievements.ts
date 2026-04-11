@@ -3,7 +3,7 @@ export interface AchievementDef {
   title: string;
   description: string;
   emoji: string;
-  category: "streak" | "volume" | "consistency";
+  category: "streak" | "volume" | "consistency" | "movement";
   /** Check function receives stats and returns true if earned */
   check: (stats: HydrationStats) => boolean;
 }
@@ -14,7 +14,9 @@ export interface HydrationStats {
   totalLiters: number;
   totalLogs: number;
   daysLogged: number;
-  perfectWeeks: number; // weeks where all 7 days met goal
+  perfectWeeks: number;
+  movementStreak: number;
+  longestMovementStreak: number;
 }
 
 export const achievements: AchievementDef[] = [
@@ -126,5 +128,31 @@ export const achievements: AchievementDef[] = [
     emoji: "✨",
     category: "consistency",
     check: (s) => s.perfectWeeks >= 1,
+  },
+
+  // Movement achievements
+  {
+    key: "move_3",
+    title: "Body in Motion",
+    description: "Complete movement tips 3 shifts in a row",
+    emoji: "🏃",
+    category: "movement",
+    check: (s) => s.longestMovementStreak >= 3,
+  },
+  {
+    key: "move_7",
+    title: "Active Week",
+    description: "7-day movement streak",
+    emoji: "💪",
+    category: "movement",
+    check: (s) => s.longestMovementStreak >= 7,
+  },
+  {
+    key: "move_14",
+    title: "Unstoppable",
+    description: "14-day movement streak — you're a machine!",
+    emoji: "🔥",
+    category: "movement",
+    check: (s) => s.longestMovementStreak >= 14,
   },
 ];
