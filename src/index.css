@@ -46,6 +46,45 @@
     --nutrition-glow: 0 8px 24px -6px hsl(174 60% 56% / 0.25);
     --neon-pink-glow: 0 8px 24px -6px hsl(174 60% 56% / 0.3);
   }
+
+  .light {
+    --background: 210 30% 97%;
+    --foreground: 220 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 15%;
+
+    --primary: 174 55% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 93%;
+    --secondary-foreground: 220 25% 20%;
+
+    --muted: 210 15% 92%;
+    --muted-foreground: 215 12% 45%;
+
+    --accent: 200 45% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 174 55% 40%;
+
+    --hydration: 200 55% 50%;
+    --nutrition: 174 55% 40%;
+    --energy: 45 65% 50%;
+
+    --surface-glow: 0 8px 32px -8px hsl(174 55% 40% / 0.12), 0 4px 16px -4px hsl(200 45% 45% / 0.08);
+    --hydration-glow: 0 8px 24px -6px hsl(200 55% 50% / 0.15);
+    --nutrition-glow: 0 8px 24px -6px hsl(174 55% 40% / 0.15);
+    --neon-pink-glow: 0 8px 24px -6px hsl(174 55% 40% / 0.15);
+  }
 }
 
 @layer base {

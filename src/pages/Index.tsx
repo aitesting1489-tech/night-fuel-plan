@@ -6,10 +6,11 @@ import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
 import AuthPage from "@/pages/Auth";
-import { LogOut, Save, History, Settings, Mail, Menu, X } from "lucide-react";
+import { LogOut, Save, History, Settings, Mail, Menu, X, Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "next-themes";
 import type { DietType } from "@/lib/schedule";
 import type { ShiftMode } from "@/components/ShiftSetup";
 
@@ -26,6 +27,7 @@ interface SavedShift {
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [guest, setGuest] = useState(false);
   const [shift, setShift] = useState<{ start: string; end: string; diet: DietType; name: string; mode: ShiftMode } | null>(null);
   const [savedShifts, setSavedShifts] = useState<SavedShift[]>([]);
@@ -154,6 +156,18 @@ const Index = () => {
               >
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 Contact
+              </button>
+              {/* Theme toggle */}
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-display text-foreground hover:bg-primary/5 transition-colors"
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4 text-energy" />
+                ) : (
+                  <Moon className="h-4 w-4 text-muted-foreground" />
+                )}
+                {theme === "dark" ? "Light Mode" : "Dark Mode"}
               </button>
               <div className="border-t border-border my-1" />
               <button
