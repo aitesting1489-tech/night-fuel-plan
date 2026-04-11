@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import Contact from "./pages/Contact.tsx";
 import HydrationHistory from "./pages/HydrationHistory.tsx";
+import Achievements from "./pages/Achievements.tsx";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
                 <Route path="/unsubscribe" element={<Unsubscribe />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/hydration" element={<HydrationHistory />} />
+                <Route path="/achievements" element={<Achievements />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
