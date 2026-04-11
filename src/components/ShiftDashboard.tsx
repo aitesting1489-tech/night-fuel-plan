@@ -65,6 +65,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
 
   const { logHydration, unlogHydration } = useHydrationLogger();
   const { checkAndAward } = useAchievements(effectiveGoal);
+  useFriendAlerts(waterSettings.notify_sound, waterSettings.notify_volume, waterSettings.sound_theme);
 
   const toggleLog = (id: string) => {
     const item = schedule.find((s) => s.id === id);
