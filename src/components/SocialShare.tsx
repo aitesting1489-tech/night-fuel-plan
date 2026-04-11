@@ -66,6 +66,18 @@ const SocialShare = ({ title, text, url = APP_URL, className = "" }: SocialShare
         <Facebook className="h-3.5 w-3.5" />
       </a>
 
+      {/* TikTok */}
+      <button
+        onClick={() => {
+          navigator.clipboard.writeText(`${text}\n${url}`);
+          toast({ title: "Copied for TikTok! 🎵", description: "Paste into your TikTok caption or bio." });
+        }}
+        className="h-8 w-8 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-95"
+        title="Share on TikTok"
+      >
+        <Music2 className="h-3.5 w-3.5" />
+      </button>
+
       {/* Copy link */}
       <button
         onClick={copyLink}
