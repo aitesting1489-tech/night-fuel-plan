@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
+import { ArrowLeft, Moon, CheckCircle2, FileDown, History } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
