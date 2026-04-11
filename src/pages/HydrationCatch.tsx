@@ -231,6 +231,7 @@ const HydrationCatch = () => {
                 title="Hydration Catch"
                 text={`💧 I scored ${score} in Hydration Catch on Circadia! Can you beat me?`}
                 className="mt-1"
+                shareCardData={{ score, mascotSrc: mascotImg, subtitle: "Can you beat me?" }}
               />
             </div>
           )}
