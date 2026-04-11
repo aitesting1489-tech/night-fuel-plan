@@ -7,6 +7,7 @@ import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
 import SocialShare from "@/components/SocialShare";
+import SparkleBurst, { getIntensity } from "@/components/SparkleBurst";
 
 const GAME_WIDTH = 360;
 const GAME_HEIGHT = 520;
@@ -256,6 +257,7 @@ const NoctisFlight = () => {
 
         {gameState === "over" ? (
           <div className="flex flex-col items-center gap-2 mt-3">
+            <SparkleBurst trigger={gameState === "over"} intensity={getIntensity(score, [5, 15])} />
             <p className="text-[10px] text-muted-foreground">Share your score!</p>
             <SocialShare
               title="Noctis Flight"

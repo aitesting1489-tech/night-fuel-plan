@@ -7,6 +7,7 @@ import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
 import SocialShare from "@/components/SocialShare";
+import SparkleBurst, { getIntensity } from "@/components/SparkleBurst";
 
 interface Drop {
   id: number;
@@ -219,6 +220,7 @@ const HydrationCatch = () => {
 
           {gameState === "over" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 dreamy-blur">
+              <SparkleBurst trigger={gameState === "over"} intensity={getIntensity(score, [10, 25])} />
               <p className="font-display text-lg font-bold text-foreground">Game Over!</p>
               <p className="text-2xl font-bold text-primary">{score}</p>
               {score >= highScore && score > 0 && (
