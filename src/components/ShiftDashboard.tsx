@@ -167,13 +167,22 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <EnergyGauge level={energyLevel} />
         <div className="relative">
           <HydrationGauge current={hydrationLogged} target={Math.max(hydrationTarget, effectiveGoal)} />
-          <button
-            onClick={() => navigate("/hydration")}
-            className="absolute top-3 right-3 h-7 w-7 rounded-lg bg-hydration/10 flex items-center justify-center text-hydration hover:bg-hydration/20 transition-colors active:scale-95"
-            title="Hydration History"
-          >
-            <History className="h-3.5 w-3.5" />
-          </button>
+          <div className="absolute top-3 right-3 flex gap-1.5">
+            <button
+              onClick={() => navigate("/achievements")}
+              className="h-7 w-7 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-400 hover:bg-amber-400/20 transition-colors active:scale-95"
+              title="Achievements"
+            >
+              <Trophy className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => navigate("/hydration")}
+              className="h-7 w-7 rounded-lg bg-hydration/10 flex items-center justify-center text-hydration hover:bg-hydration/20 transition-colors active:scale-95"
+              title="Hydration History"
+            >
+              <History className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
