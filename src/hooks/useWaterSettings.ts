@@ -17,6 +17,7 @@ export interface WaterSettings extends NotificationPreferences {
   cup_size_ml: number;
   body_weight_kg: number | null;
   use_weight_calculation: boolean;
+  sound_theme: string;
 }
 
 const DEFAULTS: WaterSettings = {
@@ -31,6 +32,7 @@ const DEFAULTS: WaterSettings = {
   notify_tips: true,
   notify_sound: true,
   notify_volume: 0.5,
+  sound_theme: "default",
 };
 
 // Recommended: ~35ml per kg body weight
@@ -77,6 +79,7 @@ export function useWaterSettings() {
         notify_tips: data.notify_tips,
         notify_sound: data.notify_sound,
         notify_volume: Number(data.notify_volume) || 0.5,
+        sound_theme: data.sound_theme || "default",
       });
     }
     setLoading(false);

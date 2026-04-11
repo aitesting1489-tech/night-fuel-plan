@@ -19,6 +19,7 @@ interface UseShiftNotificationsOptions {
   preferences?: NotificationPreferences;
   soundEnabled?: boolean;
   soundVolume?: number;
+  soundTheme?: string;
 }
 
 const tagToPreference: Record<string, keyof NotificationPreferences> = {
@@ -37,6 +38,7 @@ export function useShiftNotifications({
   preferences,
   soundEnabled = true,
   soundVolume = 0.5,
+  soundTheme = "default",
 }: UseShiftNotificationsOptions) {
   const notificationsRef = useRef<ScheduledNotification[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -61,7 +63,7 @@ export function useShiftNotifications({
 
         // Play sound effect
         if (soundEnabled && canPlaySound()) {
-          playNotificationSound(n.tag, soundVolume);
+          playNotificationSound(n.tag, soundVolume, soundTheme as any);
         }
 
         const icon = n.tag === "hydration" ? "💧" : n.tag === "meal" ? "🍽️" : n.tag === "tip" ? "🌙" : "⚡";
@@ -80,7 +82,7 @@ export function useShiftNotifications({
     }
 
     setNextNotification(nextUnfired);
-  }, [preferences]);
+  }, [preferences, soundEnabled, soundVolume, soundTheme]);
 
   useEffect(() => {
     if (!enabled || schedule.length === 0) return;
