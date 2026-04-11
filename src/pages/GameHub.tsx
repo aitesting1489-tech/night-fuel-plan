@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import SocialShare from "@/components/SocialShare";
 import { ArrowLeft, Swords, Users, Trophy, Plus, Play, RefreshCw, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
