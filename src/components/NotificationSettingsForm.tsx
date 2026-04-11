@@ -1,5 +1,6 @@
-import { Bell, Droplets, UtensilsCrossed, Zap, Lightbulb } from "lucide-react";
+import { Bell, Droplets, UtensilsCrossed, Zap, Lightbulb, Volume2 } from "lucide-react";
 import type { WaterSettings } from "@/hooks/useWaterSettings";
+import { playNotificationSound } from "@/lib/notificationSounds";
 
 interface NotificationSettingsFormProps {
   settings: WaterSettings;
@@ -11,6 +12,7 @@ const toggles = [
   { key: "notify_meals" as const, label: "Meal Time Alerts", icon: UtensilsCrossed, desc: "Notifications when it's time to eat", color: "text-primary" },
   { key: "notify_phases" as const, label: "Shift Phase Alerts", icon: Zap, desc: "Caffeine cutoff & energy dip warnings", color: "text-amber-400" },
   { key: "notify_tips" as const, label: "Wellness Tips", icon: Lightbulb, desc: "Random health tips during your shift", color: "text-emerald-400" },
+  { key: "notify_sound" as const, label: "Sound Effects", icon: Volume2, desc: "Play a chime when alerts fire", color: "text-violet-400" },
 ];
 
 const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFormProps) => {
