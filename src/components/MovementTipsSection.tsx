@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Activity, ChevronDown, ChevronUp, Flame, Check } from "lucide-react";
+import { Activity, ChevronDown, ChevronUp, Flame, Check, Timer, Calendar } from "lucide-react";
 import { getTipsForContext, pickRandomTips, type MovementTip } from "@/lib/movementTips";
 import { useMovementStreak } from "@/hooks/useMovementStreak";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +16,7 @@ interface MovementTipsSectionProps {
 const MovementTipsSection = ({ shiftFinished, currentPhase = 1, isRestDay = false }: MovementTipsSectionProps) => {
   const [expanded, setExpanded] = useState(false);
   const { user } = useAuth();
-  const { streak, todayCompleted, logTip, unlogTip, hasTodayActivity } = useMovementStreak();
+  const { streak, todayCompleted, logTip, unlogTip, hasTodayActivity, weeklySummary } = useMovementStreak();
 
   const tips = useMemo(() => {
     if (isRestDay) {
@@ -88,6 +88,31 @@ const MovementTipsSection = ({ shiftFinished, currentPhase = 1, isRestDay = fals
                   <Check className="h-3 w-3" /> Today ✓
                 </span>
               )}
+            </div>
+
+            {/* Weekly Summary */}
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              <div className="rounded-lg bg-card border border-border p-2 text-center">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <Check className="h-3 w-3 text-primary" />
+                </div>
+                <p className="text-sm font-display font-bold text-foreground">{weeklySummary.tipsCompleted}</p>
+                <p className="text-[9px] text-muted-foreground">Tips This Week</p>
+              </div>
+              <div className="rounded-lg bg-card border border-border p-2 text-center">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <Timer className="h-3 w-3 text-primary" />
+                </div>
+                <p className="text-sm font-display font-bold text-foreground">{weeklySummary.minutesMoved}</p>
+                <p className="text-[9px] text-muted-foreground">Minutes Moved</p>
+              </div>
+              <div className="rounded-lg bg-card border border-border p-2 text-center">
+                <div className="flex items-center justify-center gap-1 mb-0.5">
+                  <Calendar className="h-3 w-3 text-primary" />
+                </div>
+                <p className="text-sm font-display font-bold text-foreground">{weeklySummary.daysActive}/7</p>
+                <p className="text-[9px] text-muted-foreground">Days Active</p>
+              </div>
             </div>
 
             <div className="space-y-2 pt-2">
