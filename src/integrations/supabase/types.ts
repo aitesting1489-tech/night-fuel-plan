@@ -216,6 +216,10 @@ export type Database = {
           cup_size_ml: number
           daily_goal_ml: number
           id: string
+          notify_hydration: boolean
+          notify_meals: boolean
+          notify_phases: boolean
+          notify_tips: boolean
           reminder_interval_minutes: number
           updated_at: string
           use_weight_calculation: boolean
@@ -227,6 +231,10 @@ export type Database = {
           cup_size_ml?: number
           daily_goal_ml?: number
           id?: string
+          notify_hydration?: boolean
+          notify_meals?: boolean
+          notify_phases?: boolean
+          notify_tips?: boolean
           reminder_interval_minutes?: number
           updated_at?: string
           use_weight_calculation?: boolean
@@ -238,6 +246,10 @@ export type Database = {
           cup_size_ml?: number
           daily_goal_ml?: number
           id?: string
+          notify_hydration?: boolean
+          notify_meals?: boolean
+          notify_phases?: boolean
+          notify_tips?: boolean
           reminder_interval_minutes?: number
           updated_at?: string
           use_weight_calculation?: boolean
