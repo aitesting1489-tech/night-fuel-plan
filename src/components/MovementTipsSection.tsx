@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Activity, ChevronDown, ChevronUp, Flame, Check, Timer, Calendar } from "lucide-react";
+import { Activity, ChevronDown, ChevronUp, Flame, Check, Timer, Calendar, Target } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { getTipsForContext, pickRandomTips, type MovementTip } from "@/lib/movementTips";
 import { useMovementStreak } from "@/hooks/useMovementStreak";
 import { useAuth } from "@/contexts/AuthContext";
