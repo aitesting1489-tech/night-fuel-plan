@@ -17,6 +17,7 @@ interface UseShiftNotificationsOptions {
   shiftEndTime: string;
   enabled: boolean;
   preferences?: NotificationPreferences;
+  soundEnabled?: boolean;
 }
 
 const tagToPreference: Record<string, keyof NotificationPreferences> = {
