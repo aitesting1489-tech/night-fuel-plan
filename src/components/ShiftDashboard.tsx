@@ -9,6 +9,7 @@ import { useWaterSettings } from "@/hooks/useWaterSettings";
 import { useShiftNotifications } from "@/hooks/useShiftNotifications";
 import { useHydrationLogger } from "@/hooks/useHydrationLogger";
 import { useAchievements } from "@/hooks/useAchievements";
+import { useFriendAlerts } from "@/hooks/useFriendAlerts";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
