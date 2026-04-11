@@ -244,6 +244,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_key: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       water_intake_settings: {
         Row: {
           body_weight_kg: number | null
