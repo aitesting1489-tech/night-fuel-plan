@@ -53,6 +53,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     shiftEndTime: endTime,
     enabled: notificationsEnabled && !shiftFinished,
     preferences: waterSettings,
+    soundEnabled: waterSettings.notify_sound,
   });
 
   const toggleLog = (id: string) => {
