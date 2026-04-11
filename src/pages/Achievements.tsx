@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, Trophy, Flame, Droplets, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Trophy, Flame, Droplets, CheckCircle2, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
@@ -11,12 +11,14 @@ const categoryIcons = {
   streak: Flame,
   volume: Droplets,
   consistency: CheckCircle2,
+  movement: Activity,
 };
 
 const categoryLabels = {
   streak: "Streaks",
   volume: "Volume",
   consistency: "Consistency",
+  movement: "Movement",
 };
 
 const Achievements = () => {
@@ -30,7 +32,7 @@ const Achievements = () => {
     return null;
   }
 
-  const categories = ["streak", "volume", "consistency"] as const;
+  const categories = ["streak", "volume", "consistency", "movement"] as const;
 
   return (
     <>
