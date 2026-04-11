@@ -6,7 +6,7 @@ import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
 import AuthPage from "@/pages/Auth";
-import { LogOut, Save, History, Settings, Mail, Menu, X, Sun, Moon } from "lucide-react";
+import { LogOut, Save, History, Settings, Mail, Menu, X, Sun, Moon, Heart } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNavigate } from "react-router-dom";
@@ -149,6 +149,13 @@ const Index = () => {
               >
                 <Settings className="h-4 w-4 text-muted-foreground" />
                 Profile Settings
+              </button>
+              <button
+                onClick={() => { navigate("/noctis"); setMenuOpen(false); }}
+                className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-display text-foreground hover:bg-primary/5 transition-colors"
+              >
+                <Heart className="h-4 w-4 text-rose-400" />
+                Noctis Pet
               </button>
               <button
                 onClick={() => { navigate("/contact"); setMenuOpen(false); }}
