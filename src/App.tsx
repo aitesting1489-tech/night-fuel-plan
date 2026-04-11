@@ -21,6 +21,9 @@ import HydrationHistory from "./pages/HydrationHistory.tsx";
 import Achievements from "./pages/Achievements.tsx";
 import Leaderboard from "./pages/Leaderboard.tsx";
 import NoctisPet from "./pages/NoctisPet.tsx";
+import HydrationCatch from "./pages/HydrationCatch.tsx";
+import NoctisFlight from "./pages/NoctisFlight.tsx";
+import GameHub from "./pages/GameHub.tsx";
 
 const queryClient = new QueryClient();
 
