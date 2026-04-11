@@ -34,6 +34,7 @@ export function useShiftNotifications({
   shiftEndTime,
   enabled,
   preferences,
+  soundEnabled = true,
 }: UseShiftNotificationsOptions) {
   const notificationsRef = useRef<ScheduledNotification[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
