@@ -37,6 +37,7 @@ const ShiftTimeline = ({ phases, activePhase = 0 }: ShiftTimelineProps) => {
             const Icon = iconMap[phase.icon];
             const isActive = i <= activePhase;
             const isCrash = phase.isCrashAlert;
+            const isMovement = phase.isMovementReminder;
 
             const node = (
               <motion.div
@@ -49,6 +50,8 @@ const ShiftTimeline = ({ phases, activePhase = 0 }: ShiftTimelineProps) => {
                     ? "bg-destructive/8 border border-destructive/20"
                     : phase.isCaffeineCutoff
                     ? "bg-accent/10 border border-accent/20"
+                    : isMovement
+                    ? "bg-primary/5 border border-primary/15"
                     : "hover:bg-card/60"
                 }`}
               >
