@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Camera, Save, User, Leaf, Vegan, Drumstick, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import WaterSettingsForm from "@/components/WaterSettingsForm";
 import NotificationSettingsForm from "@/components/NotificationSettingsForm";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
 import type { DietType } from "@/lib/schedule";
+import { getMascotGender, setMascotGender, type MascotGender } from "@/lib/mascotPrefs";
 
 const diets: Array<{ value: DietType; label: string; icon: typeof Leaf }> = [
   { value: "standard", label: "Standard", icon: Drumstick },
@@ -31,6 +32,12 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { settings: waterSettings, saveSettings: saveWaterSettings, setSettings: setWaterSettings } = useWaterSettings();
+  const [mascotPref, setMascotPref] = useState<MascotGender>(getMascotGender());
+
+  const handleMascotGenderChange = useCallback((gender: MascotGender) => {
+    setMascotGender(gender);
+    setMascotPref(gender);
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -232,7 +239,12 @@ const Profile = () => {
           <WaterSettingsForm settings={waterSettings} onChange={setWaterSettings} />
 
           {/* Notification Preferences */}
-          <NotificationSettingsForm settings={waterSettings} onChange={setWaterSettings} />
+          <NotificationSettingsForm
+            settings={waterSettings}
+            onChange={setWaterSettings}
+            mascotGender={mascotPref}
+            onMascotGenderChange={handleMascotGenderChange}
+          />
 
           {/* Save Button */}
           <button

@@ -1,10 +1,15 @@
 import { Bell, Droplets, UtensilsCrossed, Zap, Lightbulb, Volume2, Music } from "lucide-react";
 import type { WaterSettings } from "@/hooks/useWaterSettings";
 import { playNotificationSound, soundThemes, type SoundTheme } from "@/lib/notificationSounds";
+import mascotBat from "@/assets/mascot-bat.png";
+import mascotBatFemale from "@/assets/mascot-bat-female.png";
+import type { MascotGender } from "./MascotTip";
 
 interface NotificationSettingsFormProps {
   settings: WaterSettings;
   onChange: (settings: WaterSettings) => void;
+  mascotGender?: MascotGender;
+  onMascotGenderChange?: (gender: MascotGender) => void;
 }
 
 const toggles = [
@@ -17,7 +22,7 @@ const toggles = [
 
 const themeKeys = Object.keys(soundThemes) as SoundTheme[];
 
-const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFormProps) => {
+const NotificationSettingsForm = ({ settings, onChange, mascotGender = "boy", onMascotGenderChange }: NotificationSettingsFormProps) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
@@ -132,6 +137,38 @@ const NotificationSettingsForm = ({ settings, onChange }: NotificationSettingsFo
           </div>
         </>
       )}
+
+      {/* Mascot Gender Picker */}
+      <div className="rounded-xl border border-border bg-card/80 dreamy-blur p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <span className="text-base">🦇</span>
+          <label className="text-xs font-medium text-foreground">Noctis Style</label>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {([
+            { value: "boy" as MascotGender, label: "Boy", img: mascotBat },
+            { value: "girl" as MascotGender, label: "Girl", img: mascotBatFemale },
+          ]).map(({ value, label, img }) => {
+            const active = mascotGender === value;
+            return (
+              <button
+                key={value}
+                onClick={() => onMascotGenderChange?.(value)}
+                className={`rounded-xl p-3 flex flex-col items-center gap-2 transition-all active:scale-[0.97] ${
+                  active
+                    ? "bg-primary/10 border-2 border-primary/50 glow-primary"
+                    : "border border-border hover:border-primary/30"
+                }`}
+              >
+                <img src={img} alt={`Noctis ${label}`} width={48} height={48} className="drop-shadow-md" />
+                <p className={`text-xs font-display font-medium ${active ? "text-primary" : "text-foreground"}`}>
+                  {label}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

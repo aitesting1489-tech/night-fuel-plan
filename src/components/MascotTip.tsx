@@ -2,21 +2,21 @@ import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import mascotBat from "@/assets/mascot-bat.png";
+import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import { getRandomTip } from "@/lib/notifications";
+
+export type MascotGender = "boy" | "girl";
 
 export type NoctisMood = "sleeping" | "worried" | "neutral" | "happy" | "ecstatic";
 
 interface MascotTipProps {
   show: boolean;
   onDismiss: () => void;
-  /** 0-100 hydration percentage */
   hydrationPercent?: number;
-  /** 0-100 energy level */
   energyLevel?: number;
-  /** Whether all items are checked */
   allChecked?: boolean;
-  /** Whether the shift is finished */
   shiftFinished?: boolean;
+  gender?: MascotGender;
 }
 
 function getMood(hydrationPercent: number, energyLevel: number, allChecked: boolean, shiftFinished: boolean): NoctisMood {
@@ -120,6 +120,7 @@ const MascotTip = ({
   energyLevel = 0,
   allChecked = false,
   shiftFinished = false,
+  gender = "boy",
 }: MascotTipProps) => {
   const [message, setMessage] = useState("");
   const [useRandomTip, setUseRandomTip] = useState(false);
@@ -169,8 +170,8 @@ const MascotTip = ({
               className="flex-shrink-0 relative"
             >
               <img
-                src={mascotBat}
-                alt="Noctis the bat mascot"
+                src={gender === "girl" ? mascotBatFemale : mascotBat}
+                alt={`Noctis the bat mascot`}
                 width={56}
                 height={56}
                 className={`drop-shadow-md transition-all duration-500 ${

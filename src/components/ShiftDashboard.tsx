@@ -10,6 +10,7 @@ import { useShiftNotifications } from "@/hooks/useShiftNotifications";
 import { useHydrationLogger } from "@/hooks/useHydrationLogger";
 import { useAchievements } from "@/hooks/useAchievements";
 import { useFriendAlerts } from "@/hooks/useFriendAlerts";
+import { getMascotGender } from "@/lib/mascotPrefs";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
@@ -316,6 +317,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         energyLevel={energyLevel}
         allChecked={allChecked}
         shiftFinished={shiftFinished}
+        gender={getMascotGender()}
       />
     </motion.div>
   );
