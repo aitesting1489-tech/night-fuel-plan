@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp, Gamepad2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -365,6 +365,32 @@ const NoctisPet = () => {
                 <p className="text-[10px] text-primary font-bold">{tip.xp}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Mini Games */}
+        <div className="mt-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Gamepad2 className="h-4 w-4 text-primary" />
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Mini Games</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => navigate("/noctis/catch")}
+              className="rounded-xl bg-card/80 dreamy-blur border border-border p-4 text-center hover:border-primary/30 transition-all active:scale-[0.97]"
+            >
+              <span className="text-2xl">💧</span>
+              <p className="font-display text-sm font-semibold text-foreground mt-1">Hydration Catch</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Catch drops, dodge poison!</p>
+            </button>
+            <button
+              onClick={() => navigate("/noctis/flight")}
+              className="rounded-xl bg-card/80 dreamy-blur border border-border p-4 text-center hover:border-primary/30 transition-all active:scale-[0.97]"
+            >
+              <span className="text-2xl">🦇</span>
+              <p className="font-display text-sm font-semibold text-foreground mt-1">Noctis Flight</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Fly through the pipes!</p>
+            </button>
           </div>
         </div>
 
