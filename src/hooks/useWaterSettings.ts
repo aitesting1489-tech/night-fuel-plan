@@ -7,6 +7,7 @@ export interface NotificationPreferences {
   notify_meals: boolean;
   notify_phases: boolean;
   notify_tips: boolean;
+  notify_sound: boolean;
 }
 
 export interface WaterSettings extends NotificationPreferences {
