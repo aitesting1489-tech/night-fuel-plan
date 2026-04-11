@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import mascotOwl from "@/assets/mascot-owl.png";
+import mascotCat from "@/assets/mascot-cat.png";
 import { getRandomTip } from "@/lib/notifications";
 
 export type NoctisMood = "sleeping" | "worried" | "neutral" | "happy" | "ecstatic";
