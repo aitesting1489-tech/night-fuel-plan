@@ -63,6 +63,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   });
 
   const { logHydration, unlogHydration } = useHydrationLogger();
+  const { checkAndAward } = useAchievements(effectiveGoal);
 
   const toggleLog = (id: string) => {
     const item = schedule.find((s) => s.id === id);
@@ -70,15 +71,13 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
-        // Unlog hydration from DB
         if (item?.type === "drip" && item.amount) {
           unlogHydration(item.amount);
         }
       } else {
         next.add(id);
-        // Log hydration to DB
         if (item?.type === "drip" && item.amount) {
-          logHydration(item.amount);
+          logHydration(item.amount).then(() => checkAndAward());
         }
       }
       return next;
