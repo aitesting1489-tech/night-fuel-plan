@@ -101,6 +101,13 @@
       radial-gradient(ellipse at 30% 80%, hsl(220 40% 20% / 0.3) 0%, transparent 40%);
   }
 
+  .light body,
+  .light & body {
+    background-image:
+      radial-gradient(ellipse at 15% 20%, hsl(174 55% 40% / 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 75%, hsl(200 45% 45% / 0.04) 0%, transparent 50%);
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
