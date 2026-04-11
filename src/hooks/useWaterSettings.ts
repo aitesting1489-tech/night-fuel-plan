@@ -2,7 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-export interface WaterSettings {
+export interface NotificationPreferences {
+  notify_hydration: boolean;
+  notify_meals: boolean;
+  notify_phases: boolean;
+  notify_tips: boolean;
+}
+
+export interface WaterSettings extends NotificationPreferences {
   daily_goal_ml: number;
   reminder_interval_minutes: number;
   cup_size_ml: number;
@@ -16,6 +23,10 @@ const DEFAULTS: WaterSettings = {
   cup_size_ml: 300,
   body_weight_kg: null,
   use_weight_calculation: false,
+  notify_hydration: true,
+  notify_meals: true,
+  notify_phases: true,
+  notify_tips: true,
 };
 
 // Recommended: ~35ml per kg body weight
@@ -56,6 +67,10 @@ export function useWaterSettings() {
         cup_size_ml: data.cup_size_ml,
         body_weight_kg: data.body_weight_kg,
         use_weight_calculation: data.use_weight_calculation,
+        notify_hydration: data.notify_hydration,
+        notify_meals: data.notify_meals,
+        notify_phases: data.notify_phases,
+        notify_tips: data.notify_tips,
       });
     }
     setLoading(false);
