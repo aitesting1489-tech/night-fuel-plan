@@ -4,6 +4,7 @@ import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
+import { useWaterSettings } from "@/hooks/useWaterSettings";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
@@ -24,9 +25,10 @@ interface ShiftDashboardProps {
 }
 
 const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
+  const { settings: waterSettings, effectiveGoal } = useWaterSettings();
   const schedule = useMemo(
-    () => generateSchedule(startTime, endTime, diet).filter((s) => s.type === "fuel" || s.type === "drip"),
-    [startTime, endTime, diet]
+    () => generateSchedule(startTime, endTime, diet, waterSettings.cup_size_ml).filter((s) => s.type === "fuel" || s.type === "drip"),
+    [startTime, endTime, diet, waterSettings.cup_size_ml]
   );
   const phases = useMemo(() => generatePhases(startTime, endTime), [startTime, endTime]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
@@ -114,7 +116,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       {/* Gauges */}
       <div className="space-y-3 mb-6">
         <EnergyGauge level={energyLevel} />
-        <HydrationGauge current={hydrationLogged} target={hydrationTarget} />
+        <HydrationGauge current={hydrationLogged} target={Math.max(hydrationTarget, effectiveGoal)} />
       </div>
 
       {/* Schedule Items */}

@@ -209,6 +209,42 @@ export type Database = {
         }
         Relationships: []
       }
+      water_intake_settings: {
+        Row: {
+          body_weight_kg: number | null
+          created_at: string
+          cup_size_ml: number
+          daily_goal_ml: number
+          id: string
+          reminder_interval_minutes: number
+          updated_at: string
+          use_weight_calculation: boolean
+          user_id: string
+        }
+        Insert: {
+          body_weight_kg?: number | null
+          created_at?: string
+          cup_size_ml?: number
+          daily_goal_ml?: number
+          id?: string
+          reminder_interval_minutes?: number
+          updated_at?: string
+          use_weight_calculation?: boolean
+          user_id: string
+        }
+        Update: {
+          body_weight_kg?: number | null
+          created_at?: string
+          cup_size_ml?: number
+          daily_goal_ml?: number
+          id?: string
+          reminder_interval_minutes?: number
+          updated_at?: string
+          use_weight_calculation?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

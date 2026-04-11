@@ -130,7 +130,7 @@ export function generatePhases(startTime: string, endTime: string): ShiftPhase[]
   return phases;
 }
 
-export function generateSchedule(startTime: string, endTime: string, diet: DietType = "standard"): ScheduleItem[] {
+export function generateSchedule(startTime: string, endTime: string, diet: DietType = "standard", cupSizeMl: number = 300): ScheduleItem[] {
   const start = parseTime(startTime);
   let end = parseTime(endTime);
   if (end <= start) end += 1440;
@@ -149,9 +149,6 @@ export function generateSchedule(startTime: string, endTime: string, diet: DietT
 
   // Caffeine cutoff item
   if (isNightShift(startTime, endTime)) {
-    const caffeineTime = parseTime("02:00");
-    let insertIdx = -1;
-    // We'll insert it in the right chronological spot later
     items.push({
       id: `caffeine-${id++}`,
       time: "2:00 AM",
@@ -166,9 +163,9 @@ export function generateSchedule(startTime: string, endTime: string, diet: DietT
 
     if (i < meals.length - 1) {
       const dripTime = mealTimes[i] + 30;
-      items.push({ id: String(id++), time: formatTime(dripTime), type: "drip", amount: 300 });
+      items.push({ id: String(id++), time: formatTime(dripTime), type: "drip", amount: cupSizeMl });
     } else {
-      items.push({ id: String(id++), time: formatTime(end), type: "drip", amount: 300 });
+      items.push({ id: String(id++), time: formatTime(end), type: "drip", amount: cupSizeMl });
     }
   });
 

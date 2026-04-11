@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import Starfield from "@/components/Starfield";
+import WaterSettingsForm from "@/components/WaterSettingsForm";
+import { useWaterSettings } from "@/hooks/useWaterSettings";
 import type { DietType } from "@/lib/schedule";
 
 const diets: Array<{ value: DietType; label: string; icon: typeof Leaf }> = [
@@ -27,6 +29,7 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const { settings: waterSettings, saveSettings: saveWaterSettings, setSettings: setWaterSettings } = useWaterSettings();
 
   useEffect(() => {
     if (!user) {
@@ -95,16 +98,19 @@ const Profile = () => {
     if (!user) return;
     setSaving(true);
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        display_name: displayName.trim(),
-        preferred_diet: diet,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
+    const [profileResult, waterResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .update({
+          display_name: displayName.trim(),
+          preferred_diet: diet,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id),
+      saveWaterSettings(waterSettings),
+    ]);
 
-    if (error) {
+    if (profileResult.error || waterResult) {
       toast.error("Failed to save");
     } else {
       trackEvent("profile_updated", { diet });
@@ -220,6 +226,9 @@ const Profile = () => {
               })}
             </div>
           </div>
+
+          {/* Water Intake Settings */}
+          <WaterSettingsForm settings={waterSettings} onChange={setWaterSettings} />
 
           {/* Save Button */}
           <button
