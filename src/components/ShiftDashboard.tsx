@@ -4,6 +4,7 @@ import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
+import { useWaterSettings } from "@/hooks/useWaterSettings";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
