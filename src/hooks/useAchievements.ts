@@ -14,6 +14,8 @@ export function useAchievements(dailyGoalMl: number) {
     totalLogs: 0,
     daysLogged: 0,
     perfectWeeks: 0,
+    movementStreak: 0,
+    longestMovementStreak: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -32,11 +34,56 @@ export function useAchievements(dailyGoalMl: number) {
     if (!user) return;
     setLoading(true);
 
-    const { data: logs } = await supabase
-      .from("hydration_logs")
-      .select("amount_ml, logged_at")
-      .eq("user_id", user.id)
-      .order("logged_at", { ascending: true });
+    const [logsRes, movementRes] = await Promise.all([
+      supabase
+        .from("hydration_logs")
+        .select("amount_ml, logged_at")
+        .eq("user_id", user.id)
+        .order("logged_at", { ascending: true }),
+      supabase
+        .from("movement_logs")
+        .select("shift_date")
+        .eq("user_id", user.id)
+        .order("shift_date", { ascending: false }),
+    ]);
+
+    const logs = logsRes.data;
+    const movementDates = movementRes.data;
+
+    // Calculate movement streak
+    let movementStreak = 0;
+    let longestMovementStreak = 0;
+    if (movementDates && movementDates.length > 0) {
+      const uniqueDates = [...new Set(movementDates.map((r) => r.shift_date))].sort().reverse();
+      // Current streak
+      const today = new Date().toISOString().split("T")[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+      const first = uniqueDates[0];
+      if (first === today || first === yesterday) {
+        movementStreak = 1;
+        for (let i = 1; i < uniqueDates.length; i++) {
+          const prev = new Date(uniqueDates[i - 1]);
+          const curr = new Date(uniqueDates[i]);
+          if (Math.round((prev.getTime() - curr.getTime()) / 86400000) === 1) {
+            movementStreak++;
+          } else break;
+        }
+      }
+      // Longest streak
+      const sorted = [...uniqueDates].sort();
+      let temp = 1;
+      longestMovementStreak = 1;
+      for (let i = 1; i < sorted.length; i++) {
+        const prev = new Date(sorted[i - 1]);
+        const curr = new Date(sorted[i]);
+        if (Math.round((curr.getTime() - prev.getTime()) / 86400000) === 1) {
+          temp++;
+          longestMovementStreak = Math.max(longestMovementStreak, temp);
+        } else {
+          temp = 1;
+        }
+      }
+    }
 
     if (!logs || logs.length === 0) {
       setStats({
@@ -46,6 +93,8 @@ export function useAchievements(dailyGoalMl: number) {
         totalLogs: 0,
         daysLogged: 0,
         perfectWeeks: 0,
+        movementStreak,
+        longestMovementStreak,
       });
       setLoading(false);
       return;
@@ -128,6 +177,8 @@ export function useAchievements(dailyGoalMl: number) {
       totalLogs: logs.length,
       daysLogged: dailyTotals.size,
       perfectWeeks,
+      movementStreak,
+      longestMovementStreak,
     };
 
     setStats(newStats);
