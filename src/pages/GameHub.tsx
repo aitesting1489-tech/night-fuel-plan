@@ -462,6 +462,21 @@ const GameHub = () => {
                       No entries yet. Be the first to play!
                     </p>
                   )}
+
+                  {/* Share tournament ranking */}
+                  {(() => {
+                    const myEntry = tournamentEntries.find(e => e.user_id === user.id);
+                    const myRank = tournamentEntries.findIndex(e => e.user_id === user.id) + 1;
+                    const shareText = myEntry
+                      ? `I'm ranked #${myRank} in this week's ${GAME_LABELS[tournament.game_type]} tournament with a score of ${myEntry.best_score}! 🏆🦇`
+                      : `Check out the ${GAME_LABELS[tournament.game_type]} weekly tournament! 🏆🦇`;
+                    return (
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                        <span className="text-[10px] text-muted-foreground">Share your ranking</span>
+                        <SocialShare title="NightFuel Tournament" text={shareText} />
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </TabsContent>
