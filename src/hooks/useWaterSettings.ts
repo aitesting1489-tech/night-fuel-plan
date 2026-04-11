@@ -73,6 +73,7 @@ export function useWaterSettings() {
         notify_meals: data.notify_meals,
         notify_phases: data.notify_phases,
         notify_tips: data.notify_tips,
+        notify_sound: data.notify_sound,
       });
     }
     setLoading(false);
