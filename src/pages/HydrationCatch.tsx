@@ -7,6 +7,7 @@ import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
 import SocialShare from "@/components/SocialShare";
+import SparkleBurst, { getIntensity } from "@/components/SparkleBurst";
 
 interface Drop {
   id: number;
