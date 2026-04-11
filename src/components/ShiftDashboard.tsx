@@ -22,7 +22,8 @@ import ProFeaturesModal from "./ProFeaturesModal";
 import ShiftTimeline from "./ShiftTimeline";
 import DecompressionBreakfast from "./DecompressionBreakfast";
 import SparkleBurst from "./SparkleBurst";
-import MascotTip from "./MascotTip";
+import MascotTip, { getMood } from "./MascotTip";
+import MiniNoctis from "./MiniNoctis";
 
 interface ShiftDashboardProps {
   startTime: string;
