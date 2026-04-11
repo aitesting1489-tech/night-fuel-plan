@@ -146,6 +146,102 @@ export type Database = {
         }
         Relationships: []
       }
+      game_challenges: {
+        Row: {
+          challenger_id: string
+          challenger_score: number | null
+          created_at: string
+          expires_at: string
+          game_type: string
+          id: string
+          opponent_id: string
+          opponent_score: number | null
+          status: string
+        }
+        Insert: {
+          challenger_id: string
+          challenger_score?: number | null
+          created_at?: string
+          expires_at?: string
+          game_type?: string
+          id?: string
+          opponent_id: string
+          opponent_score?: number | null
+          status?: string
+        }
+        Update: {
+          challenger_id?: string
+          challenger_score?: number | null
+          created_at?: string
+          expires_at?: string
+          game_type?: string
+          id?: string
+          opponent_id?: string
+          opponent_score?: number | null
+          status?: string
+        }
+        Relationships: []
+      }
+      game_sessions: {
+        Row: {
+          created_at: string
+          game_type: string
+          id: string
+          player1_id: string
+          player1_score: number
+          player2_id: string | null
+          player2_score: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          player1_id: string
+          player1_score?: number
+          player2_id?: string | null
+          player2_score?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          player1_id?: string
+          player1_score?: number
+          player2_id?: string | null
+          player2_score?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      game_tournaments: {
+        Row: {
+          created_at: string
+          game_type: string
+          id: string
+          status: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          status?: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          status?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       hydration_logs: {
         Row: {
           amount_ml: number
@@ -294,6 +390,44 @@ export type Database = {
           reason?: string
         }
         Relationships: []
+      }
+      tournament_entries: {
+        Row: {
+          attempts: number
+          best_score: number
+          created_at: string
+          id: string
+          tournament_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          best_score?: number
+          created_at?: string
+          id?: string
+          tournament_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          best_score?: number
+          created_at?: string
+          id?: string
+          tournament_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_entries_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "game_tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_achievements: {
         Row: {
