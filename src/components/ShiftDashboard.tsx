@@ -58,6 +58,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     preferences: waterSettings,
     soundEnabled: waterSettings.notify_sound,
     soundVolume: waterSettings.notify_volume,
+    soundTheme: waterSettings.sound_theme,
   });
 
   const { logHydration, unlogHydration } = useHydrationLogger();
