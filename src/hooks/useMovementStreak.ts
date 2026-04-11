@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { movementTips } from "@/lib/movementTips";
+
+interface WeeklySummary {
+  tipsCompleted: number;
+  minutesMoved: number;
+  daysActive: number;
+}
 
 interface UseMovementStreakReturn {
   streak: number;
@@ -9,21 +16,32 @@ interface UseMovementStreakReturn {
   logTip: (tipId: string) => Promise<void>;
   unlogTip: (tipId: string) => Promise<void>;
   hasTodayActivity: boolean;
+  weeklySummary: WeeklySummary;
 }
+
+const tipDurationMap = new Map(movementTips.map((t) => [t.id, t.durationMin ?? 0]));
 
 export function useMovementStreak(): UseMovementStreakReturn {
   const { user } = useAuth();
   const [streak, setStreak] = useState(0);
   const [todayCompleted, setTodayCompleted] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weeklySummary, setWeeklySummary] = useState<WeeklySummary>({ tipsCompleted: 0, minutesMoved: 0, daysActive: 0 });
 
   const today = new Date().toISOString().split("T")[0];
 
   const fetchData = useCallback(async () => {
     if (!user) { setLoading(false); return; }
 
-    // Fetch today's completions and all distinct dates for streak calc
-    const [todayRes, datesRes] = await Promise.all([
+    // Week start (Monday)
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - mondayOffset);
+    const weekStartStr = weekStart.toISOString().split("T")[0];
+
+    const [todayRes, datesRes, weekRes] = await Promise.all([
       supabase
         .from("movement_logs")
         .select("tip_id")
@@ -34,6 +52,11 @@ export function useMovementStreak(): UseMovementStreakReturn {
         .select("shift_date")
         .eq("user_id", user.id)
         .order("shift_date", { ascending: false }),
+      supabase
+        .from("movement_logs")
+        .select("tip_id, shift_date")
+        .eq("user_id", user.id)
+        .gte("shift_date", weekStartStr),
     ]);
 
     if (todayRes.data) {
@@ -41,10 +64,15 @@ export function useMovementStreak(): UseMovementStreakReturn {
     }
 
     if (datesRes.data) {
-      // Calculate consecutive day streak ending today (or yesterday)
       const uniqueDates = [...new Set(datesRes.data.map((r) => r.shift_date))].sort().reverse();
-      const streakCount = calcStreak(uniqueDates);
-      setStreak(streakCount);
+      setStreak(calcStreak(uniqueDates));
+    }
+
+    if (weekRes.data) {
+      const tipsCompleted = weekRes.data.length;
+      const minutesMoved = weekRes.data.reduce((sum, r) => sum + (tipDurationMap.get(r.tip_id) || 2), 0);
+      const daysActive = new Set(weekRes.data.map((r) => r.shift_date)).size;
+      setWeeklySummary({ tipsCompleted, minutesMoved, daysActive });
     }
 
     setLoading(false);
@@ -90,6 +118,7 @@ export function useMovementStreak(): UseMovementStreakReturn {
     logTip,
     unlogTip,
     hasTodayActivity: todayCompleted.length > 0,
+    weeklySummary,
   };
 }
 
