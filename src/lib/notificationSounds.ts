@@ -79,19 +79,20 @@ function playTone(
   osc.stop(startTime + duration + 0.05);
 }
 
-export function playNotificationSound(tag: string) {
+export function playNotificationSound(tag: string, volume: number = 0.5) {
   try {
     const soundType = (tag in soundConfigs ? tag : "tip") as SoundType;
     const config = soundConfigs[soundType];
     const ctx = getAudioContext();
+    const scaledVolume = config.volume * Math.max(0, Math.min(1, volume)) * 2;
 
     let time = ctx.currentTime;
     for (let i = 0; i < config.frequencies.length; i++) {
-      playTone(ctx, config.frequencies[i], time, config.durations[i], config.type, config.volume);
-      time += config.durations[i] * 0.8; // Slight overlap for smoother sound
+      playTone(ctx, config.frequencies[i], time, config.durations[i], config.type, scaledVolume);
+      time += config.durations[i] * 0.8;
     }
   } catch {
-    // Audio not available — fail silently
+    // Audio not available
   }
 }
 
