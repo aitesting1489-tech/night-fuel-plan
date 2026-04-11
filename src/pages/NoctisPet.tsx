@@ -368,6 +368,39 @@ const NoctisPet = () => {
           </div>
         </div>
 
+        {/* Mini Games */}
+        <div className="mt-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Gamepad2 className="h-4 w-4 text-primary" />
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Mini Games</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => navigate("/noctis/catch")}
+              className="rounded-xl bg-card/80 dreamy-blur border border-border p-4 text-center hover:border-primary/30 transition-all active:scale-[0.97]"
+            >
+              <span className="text-2xl">💧</span>
+              <p className="font-display text-sm font-semibold text-foreground mt-1">Hydration Catch</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Catch drops, dodge poison!</p>
+            </button>
+            <button
+              onClick={() => navigate("/noctis/flight")}
+              className="rounded-xl bg-card/80 dreamy-blur border border-border p-4 text-center hover:border-primary/30 transition-all active:scale-[0.97]"
+            >
+              <span className="text-2xl">🦇</span>
+              <p className="font-display text-sm font-semibold text-foreground mt-1">Noctis Flight</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Fly through the pipes!</p>
+            </button>
+          </div>
+          <button
+            onClick={() => navigate("/noctis/multiplayer")}
+            className="w-full mt-2 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 p-3 flex items-center justify-center gap-2 hover:border-primary/50 transition-all active:scale-[0.98]"
+          >
+            <Swords className="h-4 w-4 text-primary" />
+            <span className="font-display text-sm font-semibold text-foreground">Multiplayer ⚔️</span>
+          </button>
+        </div>
+
         <p className="text-center text-[10px] text-muted-foreground mt-6 mb-4">
           Keep hydrating to help Noctis grow! 🦇
         </p>
