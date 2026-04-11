@@ -6,7 +6,7 @@ import {
   canSendPushNotifications,
   type ScheduledNotification,
 } from "@/lib/notifications";
-import { playNotificationSound, canPlaySound } from "@/lib/notificationSounds";
+import { playNotificationSound, canPlaySound, type SoundTheme } from "@/lib/notificationSounds";
 import type { ScheduleItem } from "@/lib/schedule";
 import type { NotificationPreferences } from "@/hooks/useWaterSettings";
 
