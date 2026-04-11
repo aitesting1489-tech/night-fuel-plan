@@ -1,4 +1,4 @@
-import { Share2, Twitter, Facebook, LinkIcon } from "lucide-react";
+import { Share2, Twitter, Facebook, LinkIcon, Music2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialShareProps {
