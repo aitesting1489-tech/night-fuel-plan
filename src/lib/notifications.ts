@@ -2,21 +2,21 @@ import type { ScheduleItem } from "@/lib/schedule";
 
 // ── Wellness tips shown randomly during shifts ──
 const wellnessTips = [
-  "🐱 Stand up and stretch for 30 seconds — your back will thank you.",
-  "🐱 Take 3 deep breaths: in for 4s, hold 4s, out for 6s.",
-  "🐱 Splash cold water on your wrists to boost alertness naturally.",
-  "🐱 Look at something 20 feet away for 20 seconds to rest your eyes.",
-  "🐱 Good posture = more energy. Roll your shoulders back.",
-  "🐱 A quick walk (even 2 minutes) resets your focus.",
-  "🐱 Chewing gum can improve alertness during long shifts.",
-  "🐱 Bright light exposure helps reset your circadian rhythm.",
-  "🐱 Avoid heavy meals — light protein keeps you sharp.",
-  "🐱 Your body loses water faster at night. Sip consistently.",
-  "🐱 Dim your phone brightness — it helps your eyes adjust to the dark.",
-  "🐱 A handful of nuts is the perfect night shift brain fuel.",
-  "🐱 Rotate your ankles under the desk to keep blood flowing.",
-  "🐱 Humming for 10 seconds activates your vagus nerve — instant calm.",
-  "🐱 Night cats like us need extra vitamin D. Don't forget your supplements!",
+  "🦇 Stand up and stretch for 30 seconds — your back will thank you.",
+  "🦇 Take 3 deep breaths: in for 4s, hold 4s, out for 6s.",
+  "🦇 Splash cold water on your wrists to boost alertness naturally.",
+  "🦇 Look at something 20 feet away for 20 seconds to rest your eyes.",
+  "🦇 Good posture = more energy. Roll your shoulders back.",
+  "🦇 A quick walk (even 2 minutes) resets your focus.",
+  "🦇 Chewing gum can improve alertness during long shifts.",
+  "🦇 Bright light exposure helps reset your circadian rhythm.",
+  "🦇 Avoid heavy meals — light protein keeps you sharp.",
+  "🦇 Your body loses water faster at night. Sip consistently.",
+  "🦇 Dim your phone brightness — it helps your eyes adjust to the dark.",
+  "🦇 A handful of nuts is the perfect night shift brain fuel.",
+  "🦇 Rotate your ankles under the desk to keep blood flowing.",
+  "🦇 Humming for 10 seconds activates your vagus nerve — instant calm.",
+  "🦇 Night bats like us need extra vitamin D. Don't forget your supplements!",
 ];
 
 export function getRandomTip(): string {
@@ -159,7 +159,7 @@ export function buildNotificationSchedule(
     notifications.push({
       id: `tip-${id++}`,
       fireAt: new Date(shiftStart.getTime() + offset + jitter),
-      title: "🐱 Noctis says...",
+      title: "🦇 Noctis says...",
       body: getRandomTip(),
       tag: "tip",
       fired: false,
