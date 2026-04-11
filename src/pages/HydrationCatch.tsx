@@ -6,6 +6,7 @@ import { getMascotGender } from "@/lib/mascotPrefs";
 import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
+import SocialShare from "@/components/SocialShare";
 
 interface Drop {
   id: number;
@@ -226,6 +227,11 @@ const HydrationCatch = () => {
               <button onClick={startGame} className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground font-display font-semibold text-sm active:scale-95 transition-transform">
                 <RotateCcw className="h-4 w-4" /> Play Again
               </button>
+              <SocialShare
+                title="Hydration Catch"
+                text={`💧 I scored ${score} in Hydration Catch on Circadia! Can you beat me?`}
+                className="mt-1"
+              />
             </div>
           )}
 
