@@ -24,6 +24,8 @@ const Starfield = () => {
     let animId: number;
     let stars: Star[] = [];
 
+    const isLightMode = () => document.documentElement.classList.contains("light");
+
     const resize = () => {
       canvas.width = window.innerWidth * devicePixelRatio;
       canvas.height = window.innerHeight * devicePixelRatio;
@@ -46,11 +48,15 @@ const Starfield = () => {
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const light = isLightMode();
       for (const s of stars) {
         const flicker = Math.sin(t * 0.001 + s.phase) * 0.2 + 0.8;
+        const alpha = light ? s.alpha * flicker * 0.25 : s.alpha * flicker;
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r * devicePixelRatio, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(120, 220, 200, ${s.alpha * flicker})`;
+        ctx.fillStyle = light
+          ? `rgba(100, 180, 170, ${alpha})`
+          : `rgba(120, 220, 200, ${alpha})`;
         ctx.fill();
 
         s.y -= s.speed * devicePixelRatio;
@@ -70,9 +76,14 @@ const Starfield = () => {
     animId = requestAnimationFrame(draw);
     window.addEventListener("resize", resize);
 
+    // Watch for theme changes
+    const observer = new MutationObserver(() => {});
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      observer.disconnect();
     };
   }, []);
 
