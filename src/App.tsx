@@ -18,6 +18,7 @@ import Unsubscribe from "./pages/Unsubscribe.tsx";
 import Contact from "./pages/Contact.tsx";
 import HydrationHistory from "./pages/HydrationHistory.tsx";
 import Achievements from "./pages/Achievements.tsx";
+import Leaderboard from "./pages/Leaderboard.tsx";
 
 const queryClient = new QueryClient();
 
