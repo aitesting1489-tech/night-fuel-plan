@@ -1,4 +1,5 @@
 import type { ScheduleItem } from "@/lib/schedule";
+import { getRandomMovementTip } from "@/lib/movementTips";
 
 // ── Wellness tips shown randomly during shifts ──
 const wellnessTips = [
@@ -161,6 +162,22 @@ export function buildNotificationSchedule(
       fireAt: new Date(shiftStart.getTime() + offset + jitter),
       title: "🦇 Noctis says...",
       body: getRandomTip(),
+      tag: "tip",
+      fired: false,
+    });
+  }
+
+  // Movement reminders — 2-3 during shift, offset from tips
+  const moveCount = Math.min(3, Math.floor(shiftDuration / (2.5 * 60 * 60 * 1000)));
+  for (let i = 0; i < moveCount; i++) {
+    const offset = ((i + 0.5) / (moveCount + 1)) * shiftDuration;
+    const jitter = (8 + Math.random() * 12) * 60 * 1000;
+    const moveTip = getRandomMovementTip("during-shift");
+    notifications.push({
+      id: `movement-${id++}`,
+      fireAt: new Date(shiftStart.getTime() + offset + jitter),
+      title: `${moveTip.emoji} ${moveTip.title}`,
+      body: moveTip.body,
       tag: "tip",
       fired: false,
     });

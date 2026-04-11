@@ -24,6 +24,7 @@ import DecompressionBreakfast from "./DecompressionBreakfast";
 import SparkleBurst from "./SparkleBurst";
 import MascotTip, { getMood } from "./MascotTip";
 import MiniNoctis from "./MiniNoctis";
+import MovementTipsSection from "./MovementTipsSection";
 
 interface ShiftDashboardProps {
   startTime: string;
@@ -192,7 +193,10 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
           }
         />
       </div>
-      <ShiftTimeline phases={phases} activePhase={shiftFinished ? 4 : 2} />
+      <ShiftTimeline phases={phases} activePhase={shiftFinished ? 5 : 2} />
+
+      {/* Movement & Rest Tips */}
+      <MovementTipsSection shiftFinished={shiftFinished} currentPhase={shiftFinished ? undefined : 1} />
 
       {/* Gauges */}
       <div className="space-y-3 mb-6">
