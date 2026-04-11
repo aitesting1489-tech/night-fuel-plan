@@ -29,6 +29,7 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const { settings: waterSettings, saveSettings: saveWaterSettings, setSettings: setWaterSettings } = useWaterSettings();
 
   useEffect(() => {
     if (!user) {
