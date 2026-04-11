@@ -137,6 +137,9 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     ((hydrationLogged / Math.max(hydrationTarget, 1)) * 40)
   );
 
+  const hydrationPercent = hydrationTarget > 0 ? (hydrationLogged / Math.max(hydrationTarget, effectiveGoal)) * 100 : 0;
+  const noctisMood = getMood(hydrationPercent, energyLevel, allChecked, shiftFinished);
+
   const handleFinishShift = () => {
     trackEvent("shift_finished", { startTime, endTime, diet, itemsLogged: logged.size, totalItems: schedule.length });
     setShiftFinished(true);
@@ -170,7 +173,11 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
             </span>
           </div>
         </div>
-        <div className="w-9" />
+        <MiniNoctis
+          mood={noctisMood}
+          gender={getMascotGender()}
+          onClick={() => setShowMascotTip(true)}
+        />
       </div>
 
       {/* Notification Toggle */}
@@ -314,7 +321,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       <MascotTip
         show={showMascotTip}
         onDismiss={() => setShowMascotTip(false)}
-        hydrationPercent={hydrationTarget > 0 ? (hydrationLogged / Math.max(hydrationTarget, effectiveGoal)) * 100 : 0}
+        hydrationPercent={hydrationPercent}
         energyLevel={energyLevel}
         allChecked={allChecked}
         shiftFinished={shiftFinished}
