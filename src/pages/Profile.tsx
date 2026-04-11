@@ -98,16 +98,19 @@ const Profile = () => {
     if (!user) return;
     setSaving(true);
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        display_name: displayName.trim(),
-        preferred_diet: diet,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.id);
+    const [profileResult, waterResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .update({
+          display_name: displayName.trim(),
+          preferred_diet: diet,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id),
+      saveWaterSettings(waterSettings),
+    ]);
 
-    if (error) {
+    if (profileResult.error || waterResult) {
       toast.error("Failed to save");
     } else {
       trackEvent("profile_updated", { diet });
