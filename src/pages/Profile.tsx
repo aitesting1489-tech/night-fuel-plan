@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import Starfield from "@/components/Starfield";
+import WaterSettingsForm from "@/components/WaterSettingsForm";
+import { useWaterSettings } from "@/hooks/useWaterSettings";
 import type { DietType } from "@/lib/schedule";
 
 const diets: Array<{ value: DietType; label: string; icon: typeof Leaf }> = [
