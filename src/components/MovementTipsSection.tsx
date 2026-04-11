@@ -9,22 +9,29 @@ interface MovementTipsSectionProps {
   shiftFinished: boolean;
   /** 0 = early, 1 = mid, 2 = late shift */
   currentPhase?: number;
+  /** True when shown on the Night Off / rest day dashboard */
+  isRestDay?: boolean;
 }
 
-const MovementTipsSection = ({ shiftFinished, currentPhase = 1 }: MovementTipsSectionProps) => {
+const MovementTipsSection = ({ shiftFinished, currentPhase = 1, isRestDay = false }: MovementTipsSectionProps) => {
   const [expanded, setExpanded] = useState(false);
   const { user } = useAuth();
   const { streak, todayCompleted, logTip, unlogTip, hasTodayActivity } = useMovementStreak();
 
   const tips = useMemo(() => {
+    if (isRestDay) {
+      return pickRandomTips(getTipsForContext("rest-day"), 3);
+    }
     if (shiftFinished) {
       return pickRandomTips(getTipsForContext("post-shift"), 3);
     }
     return pickRandomTips(getTipsForContext("during-shift", currentPhase), 3);
-  }, [shiftFinished, currentPhase]);
+  }, [shiftFinished, currentPhase, isRestDay]);
 
-  const sectionTitle = shiftFinished ? "Recovery & Rest Tips" : "Movement Reminders";
-  const sectionSubtitle = shiftFinished
+  const sectionTitle = isRestDay ? "Rest Day Wellness" : shiftFinished ? "Recovery & Rest Tips" : "Movement Reminders";
+  const sectionSubtitle = isRestDay
+    ? "Reset your body & rhythm on your day off"
+    : shiftFinished
     ? "Help your body recover after the shift"
     : "Stay active to maintain energy";
 

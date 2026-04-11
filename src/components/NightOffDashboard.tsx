@@ -9,6 +9,7 @@ import FuelCard from "./FuelCard";
 import DripCard from "./DripCard";
 import NutritionSummary from "./NutritionSummary";
 import ShiftTimeline from "./ShiftTimeline";
+import MovementTipsSection from "./MovementTipsSection";
 
 interface NightOffDashboardProps {
   bedtime: string;
@@ -84,6 +85,9 @@ const NightOffDashboard = ({ bedtime, diet, onBack }: NightOffDashboardProps) =>
 
       {/* Timeline */}
       <ShiftTimeline phases={phases} activePhase={allLogged ? 4 : 2} />
+
+      {/* Rest-Day Movement & Recovery Tips */}
+      <MovementTipsSection shiftFinished={true} currentPhase={undefined} isRestDay={true} />
 
       {/* Gauges */}
       <div className="space-y-3 mb-6">
