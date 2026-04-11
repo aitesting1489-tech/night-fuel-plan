@@ -76,6 +76,7 @@ export function useWaterSettings() {
         notify_phases: data.notify_phases,
         notify_tips: data.notify_tips,
         notify_sound: data.notify_sound,
+        notify_volume: Number(data.notify_volume) || 0.5,
       });
     }
     setLoading(false);
