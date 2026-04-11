@@ -231,6 +231,9 @@ const Profile = () => {
           {/* Water Intake Settings */}
           <WaterSettingsForm settings={waterSettings} onChange={setWaterSettings} />
 
+          {/* Notification Preferences */}
+          <NotificationSettingsForm settings={waterSettings} onChange={setWaterSettings} />
+
           {/* Save Button */}
           <button
             onClick={handleSave}
