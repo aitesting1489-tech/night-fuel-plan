@@ -232,6 +232,7 @@ const HydrationCatch = () => {
                 text={`💧 I scored ${score} in Hydration Catch on Circadia! Can you beat me?`}
                 className="mt-1"
               />
+            </div>
           )}
 
           {gameState === "playing" && drops.map(d => (
