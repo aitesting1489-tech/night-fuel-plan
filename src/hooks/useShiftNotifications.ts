@@ -57,6 +57,11 @@ export function useShiftNotifications({
       if (n.fireAt.getTime() <= now) {
         n.fired = true;
 
+        // Play sound effect
+        if (soundEnabled && canPlaySound()) {
+          playNotificationSound(n.tag);
+        }
+
         const icon = n.tag === "hydration" ? "💧" : n.tag === "meal" ? "🍽️" : n.tag === "tip" ? "🌙" : "⚡";
         toast(n.title, {
           description: n.body,
