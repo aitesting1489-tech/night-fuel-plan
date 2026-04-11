@@ -116,7 +116,7 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       {/* Gauges */}
       <div className="space-y-3 mb-6">
         <EnergyGauge level={energyLevel} />
-        <HydrationGauge current={hydrationLogged} target={hydrationTarget} />
+        <HydrationGauge current={hydrationLogged} target={Math.max(hydrationTarget, effectiveGoal)} />
       </div>
 
       {/* Schedule Items */}
