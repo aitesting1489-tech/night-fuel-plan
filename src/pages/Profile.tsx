@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import Starfield from "@/components/Starfield";
 import WaterSettingsForm from "@/components/WaterSettingsForm";
+import NotificationSettingsForm from "@/components/NotificationSettingsForm";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
 import type { DietType } from "@/lib/schedule";
 
