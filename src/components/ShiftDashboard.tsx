@@ -5,6 +5,8 @@ import { generateSchedule, generatePhases, type ScheduleItem, type DietType } fr
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
+import { useShiftNotifications } from "@/hooks/useShiftNotifications";
+import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
 import FuelCard from "./FuelCard";
@@ -35,7 +37,22 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
   const [shiftFinished, setShiftFinished] = useState(false);
   const [breakfastDismissed, setBreakfastDismissed] = useState(false);
   const [allCheckedBurst, setAllCheckedBurst] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const prevAllChecked = useRef(false);
+
+  // Full schedule (including caffeine-cutoff, crash-alert) for notifications
+  const fullSchedule = useMemo(
+    () => generateSchedule(startTime, endTime, diet, waterSettings.cup_size_ml),
+    [startTime, endTime, diet, waterSettings.cup_size_ml]
+  );
+
+  const { nextNotification } = useShiftNotifications({
+    schedule: fullSchedule,
+    reminderIntervalMinutes: waterSettings.reminder_interval_minutes,
+    shiftStartTime: startTime,
+    shiftEndTime: endTime,
+    enabled: notificationsEnabled && !shiftFinished,
+  });
 
   const toggleLog = (id: string) => {
     setLogged((prev) => {
@@ -110,7 +127,18 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <div className="w-9" />
       </div>
 
-      {/* Timeline */}
+      {/* Notification Toggle */}
+      <div className="mb-4 flex justify-end">
+        <NotificationToggle
+          enabled={notificationsEnabled}
+          onToggle={setNotificationsEnabled}
+          nextNotificationTime={
+            nextNotification
+              ? nextNotification.fireAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+              : null
+          }
+        />
+      </div>
       <ShiftTimeline phases={phases} activePhase={shiftFinished ? 4 : 2} />
 
       {/* Gauges */}
