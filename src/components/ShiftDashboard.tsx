@@ -127,7 +127,18 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
         <div className="w-9" />
       </div>
 
-      {/* Timeline */}
+      {/* Notification Toggle */}
+      <div className="mb-4 flex justify-end">
+        <NotificationToggle
+          enabled={notificationsEnabled}
+          onToggle={setNotificationsEnabled}
+          nextNotificationTime={
+            nextNotification
+              ? nextNotification.fireAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+              : null
+          }
+        />
+      </div>
       <ShiftTimeline phases={phases} activePhase={shiftFinished ? 4 : 2} />
 
       {/* Gauges */}
