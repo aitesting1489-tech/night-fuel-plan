@@ -219,6 +219,7 @@ export type Database = {
           notify_hydration: boolean
           notify_meals: boolean
           notify_phases: boolean
+          notify_sound: boolean
           notify_tips: boolean
           reminder_interval_minutes: number
           updated_at: string
@@ -234,6 +235,7 @@ export type Database = {
           notify_hydration?: boolean
           notify_meals?: boolean
           notify_phases?: boolean
+          notify_sound?: boolean
           notify_tips?: boolean
           reminder_interval_minutes?: number
           updated_at?: string
@@ -249,6 +251,7 @@ export type Database = {
           notify_hydration?: boolean
           notify_meals?: boolean
           notify_phases?: boolean
+          notify_sound?: boolean
           notify_tips?: boolean
           reminder_interval_minutes?: number
           updated_at?: string

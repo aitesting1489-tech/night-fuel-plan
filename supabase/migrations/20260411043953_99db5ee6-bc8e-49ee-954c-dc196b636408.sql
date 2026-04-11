@@ -1,0 +1,1 @@
+ALTER TABLE public.water_intake_settings ADD COLUMN IF NOT EXISTS notify_sound BOOLEAN NOT NULL DEFAULT true;
