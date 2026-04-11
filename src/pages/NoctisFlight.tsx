@@ -257,7 +257,7 @@ const NoctisFlight = () => {
 
         {gameState === "over" ? (
           <div className="flex flex-col items-center gap-2 mt-3">
-            <p className="text-[10px] text-muted-foreground">Share your score!</p>
+            <SparkleBurst trigger={gameState === "over"} intensity={getIntensity(score, [5, 15])} />
             <SocialShare
               title="Noctis Flight"
               text={`🦇 I scored ${score} in Noctis Flight on Circadia! Can you beat me?`}
