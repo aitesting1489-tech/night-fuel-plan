@@ -8,6 +8,7 @@ export interface NotificationPreferences {
   notify_phases: boolean;
   notify_tips: boolean;
   notify_sound: boolean;
+  notify_volume: number;
 }
 
 export interface WaterSettings extends NotificationPreferences {
@@ -29,6 +30,7 @@ const DEFAULTS: WaterSettings = {
   notify_phases: true,
   notify_tips: true,
   notify_sound: true,
+  notify_volume: 0.5,
 };
 
 // Recommended: ~35ml per kg body weight
