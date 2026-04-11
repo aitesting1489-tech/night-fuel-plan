@@ -14,6 +14,7 @@ function getAudioContext(): AudioContext {
 }
 
 type SoundType = "hydration" | "meal" | "phase" | "tip";
+export type SoundTheme = "default" | "nature" | "digital" | "minimal";
 
 interface ToneConfig {
   frequencies: number[];
@@ -22,36 +23,45 @@ interface ToneConfig {
   volume: number;
 }
 
-const soundConfigs: Record<SoundType, ToneConfig> = {
-  hydration: {
-    // Gentle water droplet: two quick high notes
-    frequencies: [880, 1100],
-    durations: [0.08, 0.12],
-    type: "sine",
-    volume: 0.15,
+export const soundThemes: Record<SoundTheme, { label: string; desc: string; emoji: string }> = {
+  default: { label: "Classic", desc: "Warm chimes & soft bells", emoji: "🔔" },
+  nature: { label: "Nature", desc: "Gentle rain, birdsong tones", emoji: "🌿" },
+  digital: { label: "Digital", desc: "Crisp synth bleeps & pulses", emoji: "💎" },
+  minimal: { label: "Minimal", desc: "Ultra-subtle single tones", emoji: "🤍" },
+};
+
+const themeConfigs: Record<SoundTheme, Record<SoundType, ToneConfig>> = {
+  default: {
+    hydration: { frequencies: [880, 1100], durations: [0.08, 0.12], type: "sine", volume: 0.15 },
+    meal: { frequencies: [523, 659, 784], durations: [0.12, 0.12, 0.2], type: "sine", volume: 0.18 },
+    phase: { frequencies: [660, 880, 660], durations: [0.1, 0.15, 0.1], type: "triangle", volume: 0.2 },
+    tip: { frequencies: [698], durations: [0.3], type: "sine", volume: 0.12 },
   },
-  meal: {
-    // Warm chime: ascending three-note chord
-    frequencies: [523, 659, 784],
-    durations: [0.12, 0.12, 0.2],
-    type: "sine",
-    volume: 0.18,
+  nature: {
+    hydration: { frequencies: [440, 554, 659], durations: [0.15, 0.12, 0.18], type: "sine", volume: 0.12 },
+    meal: { frequencies: [392, 494, 587], durations: [0.2, 0.15, 0.25], type: "sine", volume: 0.14 },
+    phase: { frequencies: [330, 440, 523], durations: [0.12, 0.18, 0.15], type: "sine", volume: 0.16 },
+    tip: { frequencies: [523, 659], durations: [0.25, 0.35], type: "sine", volume: 0.1 },
   },
-  phase: {
-    // Alert tone: two-tone attention grabber
-    frequencies: [660, 880, 660],
-    durations: [0.1, 0.15, 0.1],
-    type: "triangle",
-    volume: 0.2,
+  digital: {
+    hydration: { frequencies: [1200, 1600], durations: [0.05, 0.08], type: "square", volume: 0.08 },
+    meal: { frequencies: [800, 1000, 1200], durations: [0.06, 0.06, 0.1], type: "square", volume: 0.1 },
+    phase: { frequencies: [600, 900, 600, 900], durations: [0.05, 0.05, 0.05, 0.08], type: "sawtooth", volume: 0.1 },
+    tip: { frequencies: [1000], durations: [0.12], type: "square", volume: 0.07 },
   },
-  tip: {
-    // Soft bell: single gentle tone with decay
-    frequencies: [698],
-    durations: [0.3],
-    type: "sine",
-    volume: 0.12,
+  minimal: {
+    hydration: { frequencies: [660], durations: [0.2], type: "sine", volume: 0.1 },
+    meal: { frequencies: [523, 660], durations: [0.15, 0.2], type: "sine", volume: 0.1 },
+    phase: { frequencies: [440, 554], durations: [0.12, 0.15], type: "triangle", volume: 0.12 },
+    tip: { frequencies: [554], durations: [0.25], type: "sine", volume: 0.08 },
   },
 };
+
+let currentTheme: SoundTheme = "default";
+
+export function setCurrentTheme(theme: SoundTheme) {
+  currentTheme = theme;
+}
 
 function playTone(
   ctx: AudioContext,
@@ -67,7 +77,6 @@ function playTone(
   osc.type = type;
   osc.frequency.setValueAtTime(frequency, startTime);
 
-  // Envelope: quick attack, natural decay
   gain.gain.setValueAtTime(0, startTime);
   gain.gain.linearRampToValueAtTime(volume, startTime + 0.01);
   gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
@@ -79,10 +88,12 @@ function playTone(
   osc.stop(startTime + duration + 0.05);
 }
 
-export function playNotificationSound(tag: string, volume: number = 0.5) {
+export function playNotificationSound(tag: string, volume: number = 0.5, theme?: SoundTheme) {
   try {
-    const soundType = (tag in soundConfigs ? tag : "tip") as SoundType;
-    const config = soundConfigs[soundType];
+    const activeTheme = theme || currentTheme;
+    const configs = themeConfigs[activeTheme] || themeConfigs.default;
+    const soundType = (tag in configs ? tag : "tip") as SoundType;
+    const config = configs[soundType];
     const ctx = getAudioContext();
     const scaledVolume = config.volume * Math.max(0, Math.min(1, volume)) * 2;
 
