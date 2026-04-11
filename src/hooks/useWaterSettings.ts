@@ -28,6 +28,7 @@ const DEFAULTS: WaterSettings = {
   notify_meals: true,
   notify_phases: true,
   notify_tips: true,
+  notify_sound: true,
 };
 
 // Recommended: ~35ml per kg body weight
