@@ -40,9 +40,9 @@ const moodConfig: Record<NoctisMood, {
     messages: [
       "Zzz... wake me up with some water...",
       "I'm getting sleepy... hydrate to keep us both alert!",
-      "Even owls need water to stay sharp at night...",
+      "Even cats need water to stay sharp at night...",
       "*yawns* ...a sip of water would really help right now.",
-      "My feathers are getting dry... drink something!",
+      "My fur is getting dry... drink something!",
     ],
     label: "Noctis is sleepy...",
     emoji: "😴",
@@ -56,7 +56,7 @@ const moodConfig: Record<NoctisMood, {
       "Hey, we're falling behind on hydration! Let's catch up.",
       "I'm a little worried — your water intake is low.",
       "Don't forget about me! I mean... your water.",
-      "My owl senses are tingling... you need more fluids!",
+      "My whiskers are tingling... you need more fluids!",
       "We're in this together — grab a drink for both of us!",
     ],
     label: "Noctis is concerned...",
@@ -69,13 +69,13 @@ const moodConfig: Record<NoctisMood, {
   neutral: {
     messages: [
       "Doing alright! Keep that water flowing.",
-      "Steady pace — you've got this, night owl!",
+      "Steady pace — you've got this, night cat!",
       "Not bad! A few more sips and we're cruising.",
       "The night is young and so are your hydration levels!",
       "Pro tip: consistency beats chugging. Sip steadily!",
     ],
     label: "Noctis says...",
-    emoji: "🦉",
+    emoji: "🐱",
     bobSpeed: 2,
     borderColor: "border-primary/30",
     glowColor: "shadow-primary/10",
@@ -84,9 +84,9 @@ const moodConfig: Record<NoctisMood, {
   happy: {
     messages: [
       "Now we're talking! Your hydration is looking great!",
-      "I'm one happy owl! Keep up the amazing work!",
+      "I'm one happy cat! Keep up the amazing work!",
       "You're crushing it tonight — hydration hero! 💪",
-      "My feathers are practically glowing! Just like your health!",
+      "My fur is practically glowing! Just like your health!",
       "This is what peak night shift performance looks like!",
     ],
     label: "Noctis is happy!",
@@ -99,9 +99,9 @@ const moodConfig: Record<NoctisMood, {
   ecstatic: {
     messages: [
       "INCREDIBLE! You've completed everything! I'm so proud! 🎉",
-      "YOU DID IT! Best shift partner an owl could ask for!",
-      "✨ Perfect score! My heart is doing little owl flips!",
-      "I'm literally hooting with joy! What a shift!",
+      "YOU DID IT! Best shift partner a cat could ask for!",
+      "✨ Perfect score! I'm doing little cat zoomies!",
+      "I'm literally purring with joy! What a shift!",
       "Champion of the night! Take a bow — you earned it!",
     ],
     label: "Noctis is ECSTATIC!",
@@ -142,7 +142,7 @@ const MascotTip = ({
     }
   }, [show, mood, config.messages]);
 
-  const displayText = useRandomTip ? getRandomTip().replace(/^🦉\s*/, "") : message;
+  const displayText = useRandomTip ? getRandomTip().replace(/^🐱\s*/, "") : message;
 
   return (
     <AnimatePresence>
@@ -169,8 +169,8 @@ const MascotTip = ({
               className="flex-shrink-0 relative"
             >
               <img
-                src={mascotOwl}
-                alt="Noctis the owl mascot"
+                src={mascotCat}
+                alt="Noctis the cat mascot"
                 width={56}
                 height={56}
                 className={`drop-shadow-md transition-all duration-500 ${
