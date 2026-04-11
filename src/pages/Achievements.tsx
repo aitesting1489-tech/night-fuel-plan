@@ -145,7 +145,7 @@ const Achievements = () => {
         )}
 
         <p className="text-center text-[10px] text-muted-foreground/50 mt-8 mb-4 font-light">
-          Achievements are awarded based on your hydration history
+          Achievements are awarded based on your hydration & movement history
         </p>
       </motion.div>
     </>
