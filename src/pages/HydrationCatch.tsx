@@ -45,7 +45,6 @@ const HydrationCatch = () => {
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef({ score: 0, lives: 3, combo: 0 });
 
-  // Sync state to ref for use in animation loop
   useEffect(() => { stateRef.current = { score, lives, combo }; }, [score, lives, combo]);
 
   const startGame = () => {
@@ -74,7 +73,6 @@ const HydrationCatch = () => {
     setMascotX(Math.max(0, Math.min(GAME_WIDTH - MASCOT_SIZE, x)));
   }, [gameState]);
 
-  // Game loop
   useEffect(() => {
     if (gameState !== "playing") return;
 
@@ -88,7 +86,6 @@ const HydrationCatch = () => {
         return;
       }
 
-      // Spawn drops
       const spawnRate = Math.max(400, 1200 - difficultyRef.current * 40);
       if (time - lastSpawnRef.current > spawnRate) {
         lastSpawnRef.current = time;
@@ -105,7 +102,6 @@ const HydrationCatch = () => {
         setDrops(prev => [...prev, newDrop]);
       }
 
-      // Move drops
       setDrops(prev => {
         const next: Drop[] = [];
         let newScore = curScore;
@@ -115,13 +111,10 @@ const HydrationCatch = () => {
 
         for (const d of prev) {
           const ny = d.y + d.speed;
-
-          // Check catch (bottom area near mascot)
           const catchY = GAME_HEIGHT - MASCOT_SIZE - 10;
           if (ny >= catchY && ny <= catchY + MASCOT_SIZE) {
             const mx = mascotX;
             if (d.x + d.size > mx && d.x < mx + MASCOT_SIZE) {
-              // Caught!
               if (d.type === "poison") {
                 newLives = Math.max(0, newLives - 1);
                 newCombo = 0;
@@ -140,7 +133,6 @@ const HydrationCatch = () => {
             }
           }
 
-          // Missed (fell off screen)
           if (ny > GAME_HEIGHT + 10) {
             if (d.type === "water") {
               newLives = Math.max(0, newLives - 1);
@@ -175,7 +167,6 @@ const HydrationCatch = () => {
     <div className="min-h-screen relative">
       <Starfield />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative z-10 px-4 py-6 max-w-lg mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate("/noctis")} className="h-9 w-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-95">
             <ArrowLeft className="h-4 w-4" />
@@ -187,7 +178,6 @@ const HydrationCatch = () => {
           </div>
         </div>
 
-        {/* HUD */}
         {gameState === "playing" && (
           <div className="flex items-center justify-between mb-2 px-1">
             <div className="flex gap-1">
@@ -205,7 +195,6 @@ const HydrationCatch = () => {
           </div>
         )}
 
-        {/* Game area */}
         <div
           ref={gameAreaRef}
           onPointerMove={handlePointerMove}
@@ -213,7 +202,6 @@ const HydrationCatch = () => {
           className="relative mx-auto rounded-2xl bg-card/50 dreamy-blur border border-border overflow-hidden touch-none select-none"
           style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
         >
-          {/* Idle screen */}
           {gameState === "idle" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
               <img src={mascotImg} alt="Noctis" width={80} height={80} className="drop-shadow-lg" />
@@ -228,7 +216,6 @@ const HydrationCatch = () => {
             </div>
           )}
 
-          {/* Game over */}
           {gameState === "over" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 dreamy-blur">
               <p className="font-display text-lg font-bold text-foreground">Game Over!</p>
@@ -242,7 +229,6 @@ const HydrationCatch = () => {
             </div>
           )}
 
-          {/* Drops */}
           {gameState === "playing" && drops.map(d => (
             <div
               key={d.id}
@@ -253,7 +239,6 @@ const HydrationCatch = () => {
             </div>
           ))}
 
-          {/* Splashes */}
           <AnimatePresence>
             {splashes.map(s => (
               <motion.div
@@ -270,7 +255,6 @@ const HydrationCatch = () => {
             ))}
           </AnimatePresence>
 
-          {/* Mascot catcher */}
           {gameState === "playing" && (
             <img
               src={mascotImg}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Play, RotateCcw, Heart } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getMascotGender } from "@/lib/mascotPrefs";
 import mascotBat from "@/assets/mascot-bat.png";
@@ -45,7 +45,6 @@ const NoctisFlight = () => {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const lastPipeSpawn = useRef(0);
 
-  // Preload mascot image
   useEffect(() => {
     const img = new Image();
     img.src = mascotImg;
@@ -56,7 +55,6 @@ const NoctisFlight = () => {
 
   const flap = useCallback(() => {
     if (gameStateRef.current === "idle") {
-      // Start game
       setGameState("playing");
       gameStateRef.current = "playing";
       batY.current = GAME_HEIGHT / 2;
@@ -69,13 +67,11 @@ const NoctisFlight = () => {
     } else if (gameStateRef.current === "playing") {
       batVel.current = FLAP_FORCE;
     } else {
-      // Restart
       setGameState("idle");
       gameStateRef.current = "idle";
     }
   }, []);
 
-  // Game loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -97,7 +93,6 @@ const NoctisFlight = () => {
 
       const isPlaying = gameStateRef.current === "playing";
 
-      // Background gradient
       const grad = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
       const isDark = !document.documentElement.classList.contains("light");
       if (isDark) {
@@ -110,7 +105,6 @@ const NoctisFlight = () => {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-      // Draw stars
       ctx.fillStyle = isDark ? "rgba(120, 220, 200, 0.15)" : "rgba(100, 180, 170, 0.08)";
       for (let i = 0; i < 30; i++) {
         const sx = (i * 97 + frameCount * 0.1) % GAME_WIDTH;
@@ -121,22 +115,17 @@ const NoctisFlight = () => {
       }
 
       if (isPlaying) {
-        // Physics
         batVel.current += GRAVITY;
         batY.current += batVel.current;
 
-        // Spawn pipes
         if (frameCount - lastPipeSpawn.current > 100) {
           lastPipeSpawn.current = frameCount;
           const gapY = 80 + Math.random() * (GAME_HEIGHT - PIPE_GAP - 160);
           pipes.current.push({ id: pipeId.current++, x: GAME_WIDTH, gapY, scored: false });
         }
 
-        // Move pipes
         for (const p of pipes.current) {
           p.x -= PIPE_SPEED;
-
-          // Score
           if (!p.scored && p.x + PIPE_WIDTH < GAME_WIDTH / 2 - BAT_SIZE / 2) {
             p.scored = true;
             scoreRef.current++;
@@ -145,7 +134,6 @@ const NoctisFlight = () => {
         }
         pipes.current = pipes.current.filter(p => p.x > -PIPE_WIDTH - 10);
 
-        // Collision detection
         const bx = GAME_WIDTH / 2 - BAT_SIZE / 2;
         const by = batY.current;
         let hit = by < 0 || by + BAT_SIZE > GAME_HEIGHT;
@@ -167,29 +155,24 @@ const NoctisFlight = () => {
         }
       }
 
-      // Draw pipes
       const pipeColor = isDark ? "hsl(174, 50%, 35%)" : "hsl(174, 45%, 55%)";
       const pipeBorder = isDark ? "hsl(174, 60%, 45%)" : "hsl(174, 55%, 40%)";
       for (const p of pipes.current) {
-        // Top pipe
         ctx.fillStyle = pipeColor;
         ctx.fillRect(p.x, 0, PIPE_WIDTH, p.gapY);
         ctx.strokeStyle = pipeBorder;
         ctx.lineWidth = 2;
         ctx.strokeRect(p.x, 0, PIPE_WIDTH, p.gapY);
 
-        // Bottom pipe
         ctx.fillStyle = pipeColor;
         ctx.fillRect(p.x, p.gapY + PIPE_GAP, PIPE_WIDTH, GAME_HEIGHT - p.gapY - PIPE_GAP);
         ctx.strokeRect(p.x, p.gapY + PIPE_GAP, PIPE_WIDTH, GAME_HEIGHT - p.gapY - PIPE_GAP);
 
-        // Caps
         ctx.fillStyle = pipeBorder;
         ctx.fillRect(p.x - 4, p.gapY - 16, PIPE_WIDTH + 8, 16);
         ctx.fillRect(p.x - 4, p.gapY + PIPE_GAP, PIPE_WIDTH + 8, 16);
       }
 
-      // Draw bat
       const bx2 = GAME_WIDTH / 2 - BAT_SIZE / 2;
       const by2 = isPlaying ? batY.current : GAME_HEIGHT / 2 + Math.sin(frameCount * 0.03) * 8;
       const rotation = isPlaying ? Math.min(batVel.current * 3, 30) * Math.PI / 180 : 0;
@@ -202,7 +185,6 @@ const NoctisFlight = () => {
         ctx.restore();
       }
 
-      // Score display (in-game)
       if (isPlaying) {
         ctx.fillStyle = isDark ? "rgba(255,255,255,0.8)" : "rgba(0,0,0,0.6)";
         ctx.font = "bold 28px system-ui";
@@ -210,7 +192,6 @@ const NoctisFlight = () => {
         ctx.fillText(String(scoreRef.current), GAME_WIDTH / 2, 50);
       }
 
-      // Idle text
       if (gameStateRef.current === "idle") {
         ctx.fillStyle = isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)";
         ctx.font = "bold 16px system-ui";
@@ -223,7 +204,6 @@ const NoctisFlight = () => {
         }
       }
 
-      // Game over overlay
       if (gameStateRef.current === "over") {
         ctx.fillStyle = "rgba(0,0,0,0.5)";
         ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -255,7 +235,6 @@ const NoctisFlight = () => {
     <div className="min-h-screen relative">
       <Starfield />
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative z-10 px-4 py-6 max-w-lg mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={() => navigate("/noctis")} className="h-9 w-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-95">
             <ArrowLeft className="h-4 w-4" />
@@ -266,7 +245,6 @@ const NoctisFlight = () => {
           </div>
         </div>
 
-        {/* Game canvas */}
         <canvas
           ref={canvasRef}
           onClick={flap}

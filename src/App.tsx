@@ -23,6 +23,7 @@ import Leaderboard from "./pages/Leaderboard.tsx";
 import NoctisPet from "./pages/NoctisPet.tsx";
 import HydrationCatch from "./pages/HydrationCatch.tsx";
 import NoctisFlight from "./pages/NoctisFlight.tsx";
+import GameHub from "./pages/GameHub.tsx";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                   <Route path="/noctis" element={<NoctisPet />} />
                   <Route path="/noctis/catch" element={<HydrationCatch />} />
                   <Route path="/noctis/flight" element={<NoctisFlight />} />
+                  <Route path="/noctis/multiplayer" element={<GameHub />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

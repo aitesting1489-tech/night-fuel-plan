@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp, Gamepad2 } from "lucide-react";
+import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp, Gamepad2, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -392,6 +392,13 @@ const NoctisPet = () => {
               <p className="text-[10px] text-muted-foreground mt-0.5">Fly through the pipes!</p>
             </button>
           </div>
+          <button
+            onClick={() => navigate("/noctis/multiplayer")}
+            className="w-full mt-2 rounded-xl bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 p-3 flex items-center justify-center gap-2 hover:border-primary/50 transition-all active:scale-[0.98]"
+          >
+            <Swords className="h-4 w-4 text-primary" />
+            <span className="font-display text-sm font-semibold text-foreground">Multiplayer ⚔️</span>
+          </button>
         </div>
 
         <p className="text-center text-[10px] text-muted-foreground mt-6 mb-4">
