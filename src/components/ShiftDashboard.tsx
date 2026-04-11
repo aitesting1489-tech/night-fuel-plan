@@ -25,9 +25,10 @@ interface ShiftDashboardProps {
 }
 
 const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
+  const { settings: waterSettings, effectiveGoal } = useWaterSettings();
   const schedule = useMemo(
-    () => generateSchedule(startTime, endTime, diet).filter((s) => s.type === "fuel" || s.type === "drip"),
-    [startTime, endTime, diet]
+    () => generateSchedule(startTime, endTime, diet, waterSettings.cup_size_ml).filter((s) => s.type === "fuel" || s.type === "drip"),
+    [startTime, endTime, diet, waterSettings.cup_size_ml]
   );
   const phases = useMemo(() => generatePhases(startTime, endTime), [startTime, endTime]);
   const [logged, setLogged] = useState<Set<string>>(new Set());
