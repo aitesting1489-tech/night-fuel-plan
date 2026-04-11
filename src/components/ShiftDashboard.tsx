@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Moon, CheckCircle2, FileDown, History } from "lucide-react";
+import { ArrowLeft, Moon, CheckCircle2, FileDown, History, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
@@ -8,6 +8,7 @@ import { trackEvent } from "@/lib/analytics";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
 import { useShiftNotifications } from "@/hooks/useShiftNotifications";
 import { useHydrationLogger } from "@/hooks/useHydrationLogger";
+import { useAchievements } from "@/hooks/useAchievements";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
