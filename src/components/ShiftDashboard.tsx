@@ -1,11 +1,13 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Moon, CheckCircle2, FileDown } from "lucide-react";
+import { ArrowLeft, Moon, CheckCircle2, FileDown, History } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { generateSchedule, generatePhases, type ScheduleItem, type DietType } from "@/lib/schedule";
 import { generateProtocolPdf } from "@/lib/generatePdf";
 import { trackEvent } from "@/lib/analytics";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
 import { useShiftNotifications } from "@/hooks/useShiftNotifications";
+import { useHydrationLogger } from "@/hooks/useHydrationLogger";
 import NotificationToggle from "./NotificationToggle";
 import EnergyGauge from "./EnergyGauge";
 import HydrationGauge from "./HydrationGauge";
@@ -27,6 +29,7 @@ interface ShiftDashboardProps {
 }
 
 const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDashboardProps) => {
+  const navigate = useNavigate();
   const { settings: waterSettings, effectiveGoal } = useWaterSettings();
   const schedule = useMemo(
     () => generateSchedule(startTime, endTime, diet, waterSettings.cup_size_ml).filter((s) => s.type === "fuel" || s.type === "drip"),
@@ -57,11 +60,25 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
     soundVolume: waterSettings.notify_volume,
   });
 
+  const { logHydration, unlogHydration } = useHydrationLogger();
+
   const toggleLog = (id: string) => {
+    const item = schedule.find((s) => s.id === id);
     setLogged((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+        // Unlog hydration from DB
+        if (item?.type === "drip" && item.amount) {
+          unlogHydration(item.amount);
+        }
+      } else {
+        next.add(id);
+        // Log hydration to DB
+        if (item?.type === "drip" && item.amount) {
+          logHydration(item.amount);
+        }
+      }
       return next;
     });
   };
@@ -147,7 +164,16 @@ const ShiftDashboard = ({ startTime, endTime, diet, shiftName, onBack }: ShiftDa
       {/* Gauges */}
       <div className="space-y-3 mb-6">
         <EnergyGauge level={energyLevel} />
-        <HydrationGauge current={hydrationLogged} target={Math.max(hydrationTarget, effectiveGoal)} />
+        <div className="relative">
+          <HydrationGauge current={hydrationLogged} target={Math.max(hydrationTarget, effectiveGoal)} />
+          <button
+            onClick={() => navigate("/hydration")}
+            className="absolute top-3 right-3 h-7 w-7 rounded-lg bg-hydration/10 flex items-center justify-center text-hydration hover:bg-hydration/20 transition-colors active:scale-95"
+            title="Hydration History"
+          >
+            <History className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
 
       {/* Schedule Items */}
