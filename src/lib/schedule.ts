@@ -14,10 +14,11 @@ export interface ScheduleItem {
 export interface ShiftPhase {
   label: string;
   time: string;
-  icon: "coffee" | "moon" | "alert-triangle" | "sun" | "sunrise";
+  icon: "coffee" | "moon" | "alert-triangle" | "sun" | "sunrise" | "activity";
   description: string;
   isCaffeineCutoff?: boolean;
   isCrashAlert?: boolean;
+  isMovementReminder?: boolean;
 }
 
 function parseTime(t: string): number {
@@ -118,6 +119,13 @@ export function generatePhases(startTime: string, endTime: string): ShiftPhase[]
       time: formatTime(end - 90),
       icon: "sunrise",
       description: "Light hydration & steady energy to finish strong",
+    },
+    {
+      label: "Move & Stretch",
+      time: formatTime(end - 60),
+      icon: "activity",
+      description: "Stand, stretch, and walk for 2 min — stay loose for the final hour",
+      isMovementReminder: true,
     },
     {
       label: "Shift End",
