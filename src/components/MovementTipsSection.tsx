@@ -9,9 +9,11 @@ interface MovementTipsSectionProps {
   shiftFinished: boolean;
   /** 0 = early, 1 = mid, 2 = late shift */
   currentPhase?: number;
+  /** True when shown on the Night Off / rest day dashboard */
+  isRestDay?: boolean;
 }
 
-const MovementTipsSection = ({ shiftFinished, currentPhase = 1 }: MovementTipsSectionProps) => {
+const MovementTipsSection = ({ shiftFinished, currentPhase = 1, isRestDay = false }: MovementTipsSectionProps) => {
   const [expanded, setExpanded] = useState(false);
   const { user } = useAuth();
   const { streak, todayCompleted, logTip, unlogTip, hasTodayActivity } = useMovementStreak();
