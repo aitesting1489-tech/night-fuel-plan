@@ -6,6 +6,7 @@ import { getMascotGender } from "@/lib/mascotPrefs";
 import mascotBat from "@/assets/mascot-bat.png";
 import mascotBatFemale from "@/assets/mascot-bat-female.png";
 import Starfield from "@/components/Starfield";
+import SocialShare from "@/components/SocialShare";
 
 const GAME_WIDTH = 360;
 const GAME_HEIGHT = 520;
