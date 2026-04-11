@@ -125,6 +125,27 @@ export type Database = {
         }
         Relationships: []
       }
+      friend_connections: {
+        Row: {
+          created_at: string
+          friend_user_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_user_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_user_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hydration_logs: {
         Row: {
           amount_ml: number
@@ -159,6 +180,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      leaderboard_profiles: {
+        Row: {
+          created_at: string
+          display_name: string
+          friend_code: string
+          id: string
+          opted_in: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string
+          friend_code?: string
+          id?: string
+          opted_in?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          friend_code?: string
+          id?: string
+          opted_in?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -334,6 +385,16 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      get_leaderboard_stats: {
+        Args: never
+        Returns: {
+          current_streak: number
+          display_name: string
+          friend_code: string
+          user_id: string
+          weekly_volume_ml: number
+        }[]
       }
       move_to_dlq: {
         Args: {
