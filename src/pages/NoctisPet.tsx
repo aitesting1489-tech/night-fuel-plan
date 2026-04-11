@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowLeft, Droplets, Utensils, Heart, Star, Sparkles, TrendingUp, Gamepad2, Swords } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";

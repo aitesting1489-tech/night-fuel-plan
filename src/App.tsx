@@ -51,6 +51,9 @@ const App = () => (
                   <Route path="/achievements" element={<Achievements />} />
                   <Route path="/leaderboard" element={<Leaderboard />} />
                   <Route path="/noctis" element={<NoctisPet />} />
+                  <Route path="/noctis/catch" element={<HydrationCatch />} />
+                  <Route path="/noctis/flight" element={<NoctisFlight />} />
+                  <Route path="/noctis/multiplayer" element={<GameHub />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
