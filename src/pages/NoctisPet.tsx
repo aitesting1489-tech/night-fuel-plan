@@ -302,7 +302,6 @@ const NoctisPet = () => {
           <SocialShare
             title="My Noctis Pet"
             text={`🦇 My Noctis evolved to ${stage.name} ${stage.emoji} with ${xp} XP on Circadia! How far can yours grow?`}
-            shareCardData={{ stageName: stage.name, stageEmoji: stage.emoji, score: `${xp} XP`, mascotSrc: mascotImg }}
           />
         </div>
 

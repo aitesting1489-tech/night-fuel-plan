@@ -260,7 +260,6 @@ const NoctisFlight = () => {
             <SocialShare
               title="Noctis Flight"
               text={`🦇 I scored ${score} in Noctis Flight on Circadia! Can you beat me?`}
-              shareCardData={{ score, mascotSrc: mascotImg, subtitle: "Can you beat me?" }}
             />
           </div>
         ) : (

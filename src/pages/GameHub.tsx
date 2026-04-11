@@ -473,15 +473,7 @@ const GameHub = () => {
                     return (
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                         <span className="text-[10px] text-muted-foreground">Share your ranking</span>
-                        <SocialShare
-                          title="NightFuel Tournament"
-                          text={shareText}
-                          shareCardData={{
-                            score: myEntry?.best_score,
-                            mascotSrc: mascotImg,
-                            subtitle: myEntry ? `Ranked #${myRank} this week` : "Weekly Tournament",
-                          }}
-                        />
+                        <SocialShare title="NightFuel Tournament" text={shareText} />
                       </div>
                     );
                   })()}
