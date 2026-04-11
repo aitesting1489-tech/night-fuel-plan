@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Activity, ChevronDown, ChevronUp, Flame, Check, Timer, Calendar } from "lucide-react";
+import { Activity, ChevronDown, ChevronUp, Flame, Check, Timer, Calendar, Target } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { getTipsForContext, pickRandomTips, type MovementTip } from "@/lib/movementTips";
 import { useMovementStreak } from "@/hooks/useMovementStreak";
 import { useAuth } from "@/contexts/AuthContext";
@@ -89,6 +90,30 @@ const MovementTipsSection = ({ shiftFinished, currentPhase = 1, isRestDay = fals
                 </span>
               )}
             </div>
+
+            {/* Weekly Goal Progress */}
+            {(() => {
+              const WEEKLY_GOAL = 30;
+              const pct = Math.min(100, Math.round((weeklySummary.minutesMoved / WEEKLY_GOAL) * 100));
+              const goalReached = weeklySummary.minutesMoved >= WEEKLY_GOAL;
+              return (
+                <div className="mt-2 px-3 py-2.5 rounded-lg bg-card border border-border">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Target className="h-3.5 w-3.5 text-primary" />
+                      <span className="text-xs font-display font-semibold text-foreground">Weekly Goal</span>
+                    </div>
+                    <span className={`text-[10px] font-display font-bold ${goalReached ? "text-primary" : "text-muted-foreground"}`}>
+                      {weeklySummary.minutesMoved}/{WEEKLY_GOAL} min {goalReached && "🎉"}
+                    </span>
+                  </div>
+                  <Progress value={pct} className="h-2.5 bg-muted" />
+                  {goalReached && (
+                    <p className="text-[10px] text-primary font-semibold mt-1">Goal reached! Keep it up! 💪</p>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Weekly Summary */}
             <div className="grid grid-cols-3 gap-2 mt-2">
