@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Coffee, Moon, AlertTriangle, Sun, Sunrise } from "lucide-react";
+import { Coffee, Moon, AlertTriangle, Sun, Sunrise, Activity } from "lucide-react";
 import { type ShiftPhase } from "@/lib/schedule";
 import {
   Tooltip,
@@ -14,6 +14,7 @@ const iconMap = {
   "alert-triangle": AlertTriangle,
   sun: Sun,
   sunrise: Sunrise,
+  activity: Activity,
 };
 
 interface ShiftTimelineProps {
