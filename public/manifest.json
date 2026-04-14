@@ -1,6 +1,7 @@
 {
   "name": "Circadia",
   "short_name": "Circadia",
+  "display_name": "Circadia",
   "description": "AI-powered nutrition planning for night shift workers",
   "start_url": "/",
   "display": "standalone",
