@@ -1,12 +1,23 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Camera, Save, User, Leaf, Vegan, Drumstick, Flame } from "lucide-react";
+import { ArrowLeft, Camera, Save, User, Leaf, Vegan, Drumstick, Flame, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import Starfield from "@/components/Starfield";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import WaterSettingsForm from "@/components/WaterSettingsForm";
 import NotificationSettingsForm from "@/components/NotificationSettingsForm";
 import { useWaterSettings } from "@/hooks/useWaterSettings";
