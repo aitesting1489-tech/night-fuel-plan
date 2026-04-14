@@ -32,7 +32,7 @@ const diets: Array<{ value: DietType; label: string; icon: typeof Leaf }> = [
 ];
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,6 +42,8 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { settings: waterSettings, saveSettings: saveWaterSettings, setSettings: setWaterSettings } = useWaterSettings();
   const [mascotPref, setMascotPref] = useState<MascotGender>(getMascotGender());
 
@@ -276,6 +278,49 @@ const Profile = () => {
               </>
             )}
           </button>
+
+          {/* Delete Account */}
+          <div className="pt-6 border-t border-border">
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <AlertDialogTrigger asChild>
+                <button className="w-full rounded-xl border border-destructive/30 py-3 px-4 font-display text-sm text-destructive hover:bg-destructive/10 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+                  <Trash2 className="h-4 w-4" />
+                  Delete Account
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-card border-border">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-foreground">Delete your account?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete your account and all associated data including saved shifts, hydration logs, and achievements. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="border-border">Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      setDeleting(true);
+                      try {
+                        const { error } = await supabase.functions.invoke("delete-account");
+                        if (error) throw error;
+                        await signOut();
+                        toast.success("Account deleted successfully");
+                        navigate("/");
+                      } catch (err: any) {
+                        toast.error(err.message || "Failed to delete account");
+                      } finally {
+                        setDeleting(false);
+                      }
+                    }}
+                    disabled={deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Deleting..." : "Delete permanently"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </motion.div>
     </>
