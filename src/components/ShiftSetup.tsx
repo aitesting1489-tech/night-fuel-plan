@@ -38,16 +38,19 @@ const ShiftSetup = ({ onGenerate }: ShiftSetupProps) => {
       className="flex flex-col items-center justify-center min-h-screen px-4 py-12"
     >
       <div className="w-full max-w-sm space-y-8">
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-3">
           <motion.div
             animate={{ y: [0, -4, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary/15 mb-2"
+            className="inline-flex items-center justify-center h-12 w-12 rounded-none border border-primary/40 bg-primary/5 mb-1"
           >
-            <Moon className="h-7 w-7 text-primary" />
+            <Moon className="h-6 w-6 text-primary" />
           </motion.div>
-          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight neon-text">Circadia</h1>
-          <p className="text-muted-foreground text-sm font-light">Fuel your shift with gentle nourishment. Set your hours below.</p>
+          <p className="tech-label">Configuration · v1</p>
+          <h1 className="font-display text-4xl font-light text-foreground tracking-tighter">
+            Circ<span className="font-semibold">adia</span>
+          </h1>
+          <p className="text-muted-foreground text-xs font-light tracking-wide max-w-[260px] mx-auto">Fuel your shift with gentle nourishment. Set your hours below.</p>
         </div>
 
         {/* Mode Toggle */}
