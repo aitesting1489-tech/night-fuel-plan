@@ -37,6 +37,7 @@ const statusVariant = (s: Status) =>
   s === "complete" ? "default" : s === "in_progress" ? "secondary" : s === "skipped" ? "outline" : "destructive";
 
 const PREFS_KEY = "circadia-submission-checklist-prefs";
+const UNDO_KEY = "circadia-submission-checklist-undo";
 
 const loadPrefs = () => {
   try {
@@ -44,6 +45,25 @@ const loadPrefs = () => {
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
+  }
+};
+
+const loadPersistedUndo = (): {
+  prev: { search: string; filter: string; sort: string };
+  expiresAt: number;
+} | null => {
+  try {
+    const raw = typeof window !== "undefined" ? localStorage.getItem(UNDO_KEY) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.expiresAt !== "number" || !parsed.prev) return null;
+    if (Date.now() > parsed.expiresAt) {
+      localStorage.removeItem(UNDO_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
   }
 };
 
