@@ -242,8 +242,12 @@ export default function SubmissionChecklist() {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "z") return;
       // Only suppress when focus is inside the search/filter/sort controls
-      const t = e.target as Node | null;
-      if (t && controlsRef.current && controlsRef.current.contains(t)) return;
+      const t = e.target;
+      if (
+        t instanceof Node &&
+        controlsRef.current &&
+        controlsRef.current.contains(t)
+      ) return;
       if (e.shiftKey) {
         if (pruneExpired(redoStackRef.current).length > 0) {
           e.preventDefault();
