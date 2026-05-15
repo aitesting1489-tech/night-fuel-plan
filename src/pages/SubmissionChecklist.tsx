@@ -95,6 +95,9 @@ export default function SubmissionChecklist() {
     if (!pending) return;
     if (dismissToast) toast.dismiss(pending.toastId);
     ref.current = null;
+    if (which === "undo") {
+      try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
+    }
   };
 
   const applyUndo = () => {
@@ -102,6 +105,7 @@ export default function SubmissionChecklist() {
     if (!pending || Date.now() > pending.expiresAt) return false;
     const restored = pending.prev;
     undoRef.current = null; // clear before state changes to avoid invalidation
+    try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
     setSearch(restored.search);
     setFilter(restored.filter);
     setSort(restored.sort);
@@ -135,6 +139,9 @@ export default function SubmissionChecklist() {
       onDismiss: () => { undoRef.current = null; },
     });
     undoRef.current = { prev: previousState, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
+    try {
+      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev: previousState, expiresAt: undoRef.current.expiresAt }));
+    } catch { /* ignore */ }
     return true;
   };
 
@@ -152,6 +159,9 @@ export default function SubmissionChecklist() {
       onDismiss: () => { undoRef.current = null; },
     });
     undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
+    try {
+      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev, expiresAt: undoRef.current.expiresAt }));
+    } catch { /* ignore */ }
   };
 
   // Invalidate pending undo/redo as soon as the user changes a control manually
