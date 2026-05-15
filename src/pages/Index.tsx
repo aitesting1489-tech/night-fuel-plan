@@ -5,6 +5,7 @@ import ShiftSetup from "@/components/ShiftSetup";
 import ShiftDashboard from "@/components/ShiftDashboard";
 import NightOffDashboard from "@/components/NightOffDashboard";
 import Starfield from "@/components/Starfield";
+import SEO from "@/components/SEO";
 import AuthPage from "@/pages/Auth";
 import { LogOut, Save, History, Settings, Mail, Menu, X, Sun, Moon, Heart } from "lucide-react";
 import { toast } from "sonner";
@@ -120,6 +121,11 @@ const Index = () => {
 
   return (
     <>
+      <SEO
+        title="Circadia – Night Shift Nutrition & Hydration Planner"
+        description="Plan meals, hydration, caffeine cutoffs, and recovery for any night shift. Personalized AI fueling schedules for nurses, drivers, and overnight workers."
+        path="/"
+      />
       <Starfield />
 
       {/* Hamburger menu */}

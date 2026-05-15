@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, AlertTriangle, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 const Terms = () => {
   const navigate = useNavigate();
@@ -11,6 +12,11 @@ const Terms = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen px-4 py-8 max-w-lg mx-auto"
     >
+      <SEO
+        title="Terms of Service | Circadia"
+        description="Terms of use for Circadia, including the medical disclaimer for AI-generated nutrition guidance. Use schedules at your own risk; consult a doctor."
+        path="/terms"
+      />
       <button
         onClick={() => navigate(-1)}
         className="h-9 w-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors active:scale-95 mb-6"
