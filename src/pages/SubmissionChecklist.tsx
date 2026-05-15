@@ -54,6 +54,25 @@ export default function SubmissionChecklist() {
   const [filter, setFilter] = useState<string>(initialPrefs.filter ?? "all");
   const [search, setSearch] = useState<string>(initialPrefs.search ?? "");
   const [sort, setSort] = useState<string>(initialPrefs.sort ?? "original");
+  const [resetOpen, setResetOpen] = useState(false);
+
+  const isDefault = filter === "all" && search === "" && sort === "original";
+
+  const performReset = () => {
+    setSearch("");
+    setFilter("all");
+    setSort("original");
+    try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
+    toast.success("Search & filters reset");
+  };
+
+  const handleResetClick = () => {
+    if (isDefault) {
+      performReset();
+    } else {
+      setResetOpen(true);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -181,10 +200,10 @@ export default function SubmissionChecklist() {
                 <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">Reset search & filters</Button>
-              </AlertDialogTrigger>
+            <Button variant="outline" onClick={handleResetClick} disabled={isDefault}>
+              Reset search & filters
+            </Button>
+            <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Reset search & filters?</AlertDialogTitle>
@@ -195,17 +214,7 @@ export default function SubmissionChecklist() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => {
-                      setSearch("");
-                      setFilter("all");
-                      setSort("original");
-                      try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-                      toast.success("Search & filters reset");
-                    }}
-                  >
-                    Reset
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={performReset}>Reset</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
