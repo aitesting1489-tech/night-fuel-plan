@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -58,28 +58,54 @@ export default function SubmissionChecklist() {
 
   const isDefault = filter === "all" && search === "" && sort === "original";
 
+  // Pending undo for the most recent reset; cleared after the snackbar window
+  const undoRef = useRef<{ prev: { search: string; filter: string; sort: string }; expiresAt: number } | null>(null);
+  const UNDO_WINDOW_MS = 8000;
+
+  const applyUndo = () => {
+    const pending = undoRef.current;
+    if (!pending || Date.now() > pending.expiresAt) return false;
+    setSearch(pending.prev.search);
+    setFilter(pending.prev.filter);
+    setSort(pending.prev.sort);
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(pending.prev)); } catch { /* ignore */ }
+    undoRef.current = null;
+    toast.success("Previous search & filters restored");
+    return true;
+  };
+
   const performReset = () => {
     const prev = { search, filter, sort };
     setSearch("");
     setFilter("all");
     setSort("original");
     try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-    toast.success("Search & filters reset", {
-      action: {
-        label: "Undo",
-        onClick: () => {
-          setSearch(prev.search);
-          setFilter(prev.filter);
-          setSort(prev.sort);
-          try {
-            localStorage.setItem(PREFS_KEY, JSON.stringify(prev));
-          } catch { /* ignore */ }
-          toast.success("Previous search & filters restored");
-        },
-      },
-      duration: 8000,
+    undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS };
+    const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
+      action: { label: "Undo", onClick: applyUndo },
+      duration: UNDO_WINDOW_MS,
+      onAutoClose: () => { undoRef.current = null; },
+      onDismiss: () => { undoRef.current = null; },
     });
+    return toastId;
   };
+
+  // Keyboard shortcut: Ctrl/Cmd+Z while undo window is active
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const isUndo = (e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "z";
+      if (!isUndo) return;
+      // Don't hijack Ctrl/Cmd+Z while the user is editing a text field
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (undoRef.current && Date.now() <= undoRef.current.expiresAt) {
+        e.preventDefault();
+        applyUndo();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const handleResetClick = () => {
     if (isDefault) {
