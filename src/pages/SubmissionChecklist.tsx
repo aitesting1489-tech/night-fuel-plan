@@ -37,7 +37,14 @@ const statusVariant = (s: Status) =>
   s === "complete" ? "default" : s === "in_progress" ? "secondary" : s === "skipped" ? "outline" : "destructive";
 
 const PREFS_KEY = "circadia-submission-checklist-prefs";
-const UNDO_KEY = "circadia-submission-checklist-undo";
+const UNDO_KEY = "circadia-submission-checklist-undo-stack";
+const UNDO_WINDOW_MS = 8000;
+const MAX_HISTORY = 10;
+
+type Snapshot = { search: string; filter: string; sort: string };
+type Entry = { prev: Snapshot; expiresAt: number };
+
+const DEFAULTS: Snapshot = { search: "", filter: "all", sort: "original" };
 
 const loadPrefs = () => {
   try {
@@ -48,22 +55,27 @@ const loadPrefs = () => {
   }
 };
 
-const loadPersistedUndo = (): {
-  prev: { search: string; filter: string; sort: string };
-  expiresAt: number;
-} | null => {
+const loadPersistedUndoStack = (): Entry[] => {
   try {
     const raw = typeof window !== "undefined" ? localStorage.getItem(UNDO_KEY) : null;
-    if (!raw) return null;
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.expiresAt !== "number" || !parsed.prev) return null;
-    if (Date.now() > parsed.expiresAt) {
-      localStorage.removeItem(UNDO_KEY);
-      return null;
-    }
-    return parsed;
+    if (!Array.isArray(parsed)) return [];
+    const now = Date.now();
+    return parsed.filter(
+      (e: any) => e && e.prev && typeof e.expiresAt === "number" && e.expiresAt > now
+    );
   } catch {
-    return null;
+    return [];
+  }
+};
+
+const persistUndoStack = (stack: Entry[]) => {
+  try {
+    if (stack.length === 0) localStorage.removeItem(UNDO_KEY);
+    else localStorage.setItem(UNDO_KEY, JSON.stringify(stack));
+  } catch {
+    /* ignore */
   }
 };
 
