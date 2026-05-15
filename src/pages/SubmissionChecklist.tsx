@@ -241,7 +241,6 @@ export default function SubmissionChecklist() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "z") return;
-      const t = e.target as HTMLElement | null;
       // Only suppress when focus is inside the search/filter/sort controls
       const t = e.target as Node | null;
       if (t && controlsRef.current && controlsRef.current.contains(t)) return;
