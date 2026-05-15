@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import SubmissionChecklist from "./SubmissionChecklist";
+
+const renderPage = () => render(<TooltipProvider><SubmissionChecklist /></TooltipProvider>);
 
 const sampleItems = [
   { id: "a", label: "Alpha", category: "Cat1", status: "complete" },
