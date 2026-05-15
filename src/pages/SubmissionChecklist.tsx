@@ -170,6 +170,18 @@ export default function SubmissionChecklist() {
                 <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearch("");
+                setFilter("all");
+                setSort("original");
+                try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
+                toast.success("Search & filters reset");
+              }}
+            >
+              Reset search & filters
+            </Button>
             <Button onClick={download}>Download JSON</Button>
           </>
         )}
