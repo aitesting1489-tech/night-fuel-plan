@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SubmissionChecklist from "./SubmissionChecklist";
@@ -18,7 +18,6 @@ const getFileInput = () =>
 
 const uploadSampleChecklist = async () => {
   const json = JSON.stringify(sampleItems);
-  // jsdom's File doesn't always implement .text(); provide a stub object that satisfies the component
   const fileLike = {
     name: "checklist.json",
     type: "application/json",
@@ -28,53 +27,48 @@ const uploadSampleChecklist = async () => {
   await act(async () => {
     fireEvent.change(input, { target: { files: [fileLike] } });
   });
-  // Wait for the search input to appear (items loaded)
   await waitFor(() => {
     expect(getSearchInput()).not.toBeNull();
   });
 };
 
 const performResetWithConfirm = async () => {
-  // The "Reset search & filters" button opens the AlertDialog when
-  // current state differs from defaults
   fireEvent.click(
     screen.getByRole("button", { name: /Reset search & filters/i })
   );
-  // The confirm action inside the dialog has the exact label "Reset"
   const confirmBtn = await screen.findByRole("button", { name: /^Reset$/ });
   await act(async () => {
     fireEvent.click(confirmBtn);
   });
 };
 
+// The invalidation effect debounces by 450ms — advance just past it.
+const flushInvalidationDebounce = async () => {
+  await act(async () => {
+    vi.advanceTimersByTime(500);
+  });
+};
+
 describe("SubmissionChecklist — undo invalidation", () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
-  it("cancels undo after the user edits the search input", async () => {
+  it("cancels undo after the user settles on an edited search value", async () => {
     renderPage();
     await uploadSampleChecklist();
 
-    // Make state non-default so reset opens the confirm dialog
-    const searchBox = getSearchInput();
-    fireEvent.change(searchBox, { target: { value: "alpha" } });
-    expect(searchBox.value).toBe("alpha");
-
+    fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
     await performResetWithConfirm();
-
-    // Search is cleared after reset
     expect(getSearchInput().value).toBe("");
 
-    // User edits search again — this must invalidate the pending undo
     fireEvent.change(getSearchInput(), { target: { value: "edited" } });
-    expect(getSearchInput().value).toBe("edited");
+    await flushInvalidationDebounce();
 
-    // Press Ctrl+Z — should be a no-op because undo was cancelled
     await act(async () => {
       fireEvent.keyDown(window, { key: "z", ctrlKey: true });
     });
-
     expect(getSearchInput().value).toBe("edited");
   });
 
@@ -86,32 +80,70 @@ describe("SubmissionChecklist — undo invalidation", () => {
     await performResetWithConfirm();
     expect(getSearchInput().value).toBe("");
 
-    // Press Ctrl+Z — should restore "alpha"
     await act(async () => {
       fireEvent.keyDown(window, { key: "z", ctrlKey: true });
     });
-
     expect(getSearchInput().value).toBe("alpha");
   });
 
-  it("manually setting search/filter/sort state diverging from defaults clears persisted undo", async () => {
+  it("settled divergence clears the persisted undo snapshot", async () => {
+    renderPage();
+    await uploadSampleChecklist();
+
+    fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
+    await performResetWithConfirm();
+    expect(
+      localStorage.getItem("circadia-submission-checklist-undo-stack")
+    ).not.toBeNull();
+
+    fireEvent.change(getSearchInput(), { target: { value: "x" } });
+    await flushInvalidationDebounce();
+
+    expect(
+      localStorage.getItem("circadia-submission-checklist-undo-stack")
+    ).toBeNull();
+  });
+
+  it("keeps undo valid when the user types and clears the search back to default", async () => {
     renderPage();
     await uploadSampleChecklist();
 
     fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
     await performResetWithConfirm();
 
-    // The undo stack is persisted to localStorage at this point
+    // Type then immediately revert before the debounce window elapses.
+    fireEvent.change(getSearchInput(), { target: { value: "transient" } });
+    await act(async () => {
+      vi.advanceTimersByTime(100);
+    });
+    fireEvent.change(getSearchInput(), { target: { value: "" } });
+    await flushInvalidationDebounce();
+
+    // Persisted undo should still be intact.
     expect(
       localStorage.getItem("circadia-submission-checklist-undo-stack")
     ).not.toBeNull();
 
-    // User edits search after reset → invalidates and clears persisted undo
-    fireEvent.change(getSearchInput(), { target: { value: "x" } });
+    await act(async () => {
+      fireEvent.keyDown(window, { key: "z", ctrlKey: true });
+    });
+    expect(getSearchInput().value).toBe("alpha");
+  });
 
-    // Effect runs synchronously after state change in React 18 testing
+  it("does not invalidate while the current state matches the snapshot's prev value", async () => {
+    renderPage();
+    await uploadSampleChecklist();
+
+    fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
+    await performResetWithConfirm();
+
+    // Manually re-type the pre-reset value — matches the top undo entry's prev.
+    fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
+    await flushInvalidationDebounce();
+
+    // History preserved: undo would be a no-op now, but still available.
     expect(
       localStorage.getItem("circadia-submission-checklist-undo-stack")
-    ).toBeNull();
+    ).not.toBeNull();
   });
 });
