@@ -1,0 +1,12 @@
+# Circadia
+
+> AI-powered nutrition, hydration, and recovery planning for night shift workers. Build personalized shift schedules with meal timing, caffeine cutoffs, and decompression routines.
+
+Circadia helps people who work overnight stay fueled, hydrated, and energized. It generates a timeline of meals, drinks, movement, and rest tuned to each shift, and offers a Pro tier with downloadable LunarFuel/Blackout protocols.
+
+## Pages
+
+- [Home](/): Configure a shift and generate a personalized fueling timeline.
+- [Contact](/contact): Reach the Circadia team with questions or feedback.
+- [Privacy Policy](/privacy): How Circadia collects, processes, and protects user data (GDPR/CCPA).
+- [Terms of Service](/terms): Terms of use and the medical disclaimer for AI-generated nutrition advice.
