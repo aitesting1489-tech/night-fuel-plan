@@ -29,6 +29,8 @@ export default function SubmissionChecklist() {
   const [items, setItems] = useState<ChecklistItem[] | null>(null);
   const [fileName, setFileName] = useState<string>("circadia-submission-checklist.json");
   const [filter, setFilter] = useState<string>("all");
+  const [search, setSearch] = useState<string>("");
+  const [sort, setSort] = useState<string>("original");
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { complete: 0, in_progress: 0, action_required: 0, skipped: 0 };
@@ -36,10 +38,37 @@ export default function SubmissionChecklist() {
     return c;
   }, [items]);
 
-  const visible = useMemo(
-    () => (filter === "all" ? items ?? [] : (items ?? []).filter((i) => i.status === filter)),
-    [items, filter]
-  );
+  // Sort priority: surface incomplete work first
+  const STATUS_ORDER: Record<Status, number> = {
+    action_required: 0,
+    in_progress: 1,
+    skipped: 2,
+    complete: 3,
+  };
+
+  const visible = useMemo(() => {
+    let list = items ?? [];
+    if (filter !== "all") list = list.filter((i) => i.status === filter);
+    const q = search.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        (i) =>
+          i.label.toLowerCase().includes(q) ||
+          (i.category ?? "").toLowerCase().includes(q) ||
+          (i.source ?? "").toLowerCase().includes(q)
+      );
+    }
+    if (sort === "status") {
+      list = [...list].sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+    } else if (sort === "status_desc") {
+      list = [...list].sort((a, b) => STATUS_ORDER[b.status] - STATUS_ORDER[a.status]);
+    } else if (sort === "label") {
+      list = [...list].sort((a, b) => a.label.localeCompare(b.label));
+    } else if (sort === "category") {
+      list = [...list].sort((a, b) => (a.category ?? "").localeCompare(b.category ?? ""));
+    }
+    return list;
+  }, [items, filter, search, sort]);
 
   const onUpload = async (file: File) => {
     try {
@@ -95,13 +124,30 @@ export default function SubmissionChecklist() {
         <div className="flex-1" />
         {items && (
           <>
+            <Input
+              type="search"
+              placeholder="Search label, category…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full sm:w-[220px]"
+            />
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-[170px]"><SelectValue placeholder="Filter" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All ({items.length})</SelectItem>
                 {STATUSES.map((s) => (
                   <SelectItem key={s} value={s}>{s.replace("_", " ")} ({counts[s] ?? 0})</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={sort} onValueChange={setSort}>
+              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="original">Original order</SelectItem>
+                <SelectItem value="status">Status (incomplete first)</SelectItem>
+                <SelectItem value="status_desc">Status (complete first)</SelectItem>
+                <SelectItem value="label">Label (A–Z)</SelectItem>
+                <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={download}>Download JSON</Button>
