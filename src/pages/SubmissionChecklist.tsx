@@ -441,7 +441,7 @@ export default function SubmissionChecklist() {
               </AlertDialogContent>
             </AlertDialog>
             <Button onClick={download}>Download JSON</Button>
-          </>
+          </div>
         )}
       </Card>
 
