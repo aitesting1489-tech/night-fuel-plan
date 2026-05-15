@@ -24,6 +24,7 @@ import NoctisPet from "./pages/NoctisPet.tsx";
 import HydrationCatch from "./pages/HydrationCatch.tsx";
 import NoctisFlight from "./pages/NoctisFlight.tsx";
 import GameHub from "./pages/GameHub.tsx";
+import SubmissionChecklist from "./pages/SubmissionChecklist.tsx";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
                   <Route path="/noctis/catch" element={<HydrationCatch />} />
                   <Route path="/noctis/flight" element={<NoctisFlight />} />
                   <Route path="/noctis/multiplayer" element={<GameHub />} />
+                  <Route path="/submission-checklist" element={<SubmissionChecklist />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
