@@ -58,18 +58,31 @@ export default function SubmissionChecklist() {
 
   const isDefault = filter === "all" && search === "" && sort === "original";
 
-  // Pending undo for the most recent reset; cleared after the snackbar window
-  const undoRef = useRef<{ prev: { search: string; filter: string; sort: string }; expiresAt: number } | null>(null);
+  // Pending undo for the most recent reset; cleared after the snackbar window,
+  // by toast dismissal, or when the user changes any control after the reset.
+  const undoRef = useRef<{
+    prev: { search: string; filter: string; sort: string };
+    expiresAt: number;
+    toastId: string | number;
+  } | null>(null);
   const UNDO_WINDOW_MS = 8000;
+
+  const clearUndo = (dismissToast = false) => {
+    const pending = undoRef.current;
+    if (!pending) return;
+    if (dismissToast) toast.dismiss(pending.toastId);
+    undoRef.current = null;
+  };
 
   const applyUndo = () => {
     const pending = undoRef.current;
     if (!pending || Date.now() > pending.expiresAt) return false;
+    undoRef.current = null; // clear first so the upcoming state changes don't re-trigger invalidation
     setSearch(pending.prev.search);
     setFilter(pending.prev.filter);
     setSort(pending.prev.sort);
     try { localStorage.setItem(PREFS_KEY, JSON.stringify(pending.prev)); } catch { /* ignore */ }
-    undoRef.current = null;
+    toast.dismiss(pending.toastId);
     toast.success("Previous search & filters restored");
     return true;
   };
@@ -80,15 +93,24 @@ export default function SubmissionChecklist() {
     setFilter("all");
     setSort("original");
     try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-    undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS };
     const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
       action: { label: "Undo", onClick: applyUndo },
       duration: UNDO_WINDOW_MS,
       onAutoClose: () => { undoRef.current = null; },
       onDismiss: () => { undoRef.current = null; },
     });
-    return toastId;
+    undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
   };
+
+  // Invalidate pending undo as soon as the user changes any control after a reset
+  useEffect(() => {
+    const pending = undoRef.current;
+    if (!pending) return;
+    const isPostReset = search === "" && filter === "all" && sort === "original";
+    if (!isPostReset) {
+      clearUndo(true);
+    }
+  }, [search, filter, sort]);
 
   // Keyboard shortcut: Ctrl/Cmd+Z while undo window is active
   useEffect(() => {
