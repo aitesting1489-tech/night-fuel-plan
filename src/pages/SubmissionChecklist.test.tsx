@@ -53,7 +53,7 @@ describe("SubmissionChecklist — undo invalidation", () => {
   });
 
   it("cancels undo after the user edits the search input", async () => {
-    render(<SubmissionChecklist />);
+    renderPage();
     await uploadSampleChecklist();
 
     // Make state non-default so reset opens the confirm dialog
@@ -79,7 +79,7 @@ describe("SubmissionChecklist — undo invalidation", () => {
   });
 
   it("undo restores the previous search when nothing is edited (positive control)", async () => {
-    render(<SubmissionChecklist />);
+    renderPage();
     await uploadSampleChecklist();
 
     fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
@@ -95,7 +95,7 @@ describe("SubmissionChecklist — undo invalidation", () => {
   });
 
   it("manually setting search/filter/sort state diverging from defaults clears persisted undo", async () => {
-    render(<SubmissionChecklist />);
+    renderPage();
     await uploadSampleChecklist();
 
     fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
