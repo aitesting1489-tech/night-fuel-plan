@@ -37,6 +37,7 @@ const statusVariant = (s: Status) =>
   s === "complete" ? "default" : s === "in_progress" ? "secondary" : s === "skipped" ? "outline" : "destructive";
 
 const PREFS_KEY = "circadia-submission-checklist-prefs";
+const UNDO_KEY = "circadia-submission-checklist-undo";
 
 const loadPrefs = () => {
   try {
@@ -44,6 +45,25 @@ const loadPrefs = () => {
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
+  }
+};
+
+const loadPersistedUndo = (): {
+  prev: { search: string; filter: string; sort: string };
+  expiresAt: number;
+} | null => {
+  try {
+    const raw = typeof window !== "undefined" ? localStorage.getItem(UNDO_KEY) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.expiresAt !== "number" || !parsed.prev) return null;
+    if (Date.now() > parsed.expiresAt) {
+      localStorage.removeItem(UNDO_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
   }
 };
 
@@ -75,6 +95,9 @@ export default function SubmissionChecklist() {
     if (!pending) return;
     if (dismissToast) toast.dismiss(pending.toastId);
     ref.current = null;
+    if (which === "undo") {
+      try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
+    }
   };
 
   const applyUndo = () => {
@@ -82,6 +105,7 @@ export default function SubmissionChecklist() {
     if (!pending || Date.now() > pending.expiresAt) return false;
     const restored = pending.prev;
     undoRef.current = null; // clear before state changes to avoid invalidation
+    try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
     setSearch(restored.search);
     setFilter(restored.filter);
     setSort(restored.sort);
@@ -111,10 +135,13 @@ export default function SubmissionChecklist() {
     const toastId = toast.success("Reset re-applied (Ctrl/⌘+Z to undo)", {
       action: { label: "Undo", onClick: applyUndo },
       duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; },
-      onDismiss: () => { undoRef.current = null; },
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
     });
     undoRef.current = { prev: previousState, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
+    try {
+      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev: previousState, expiresAt: undoRef.current.expiresAt }));
+    } catch { /* ignore */ }
     return true;
   };
 
@@ -128,10 +155,13 @@ export default function SubmissionChecklist() {
     const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
       action: { label: "Undo", onClick: applyUndo },
       duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; },
-      onDismiss: () => { undoRef.current = null; },
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
     });
     undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
+    try {
+      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev, expiresAt: undoRef.current.expiresAt }));
+    } catch { /* ignore */ }
   };
 
   // Invalidate pending undo/redo as soon as the user changes a control manually
@@ -166,6 +196,21 @@ export default function SubmissionChecklist() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Rehydrate a still-valid undo snapshot after page refresh
+  useEffect(() => {
+    const persisted = loadPersistedUndo();
+    if (!persisted) return;
+    const remaining = persisted.expiresAt - Date.now();
+    if (remaining <= 0) return;
+    const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
+      action: { label: "Undo", onClick: applyUndo },
+      duration: remaining,
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+    });
+    undoRef.current = { prev: persisted.prev, expiresAt: persisted.expiresAt, toastId };
   }, []);
 
   const handleResetClick = () => {
