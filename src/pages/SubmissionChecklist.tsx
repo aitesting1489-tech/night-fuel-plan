@@ -124,13 +124,30 @@ export default function SubmissionChecklist() {
         <div className="flex-1" />
         {items && (
           <>
+            <Input
+              type="search"
+              placeholder="Search label, category…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full sm:w-[220px]"
+            />
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-[170px]"><SelectValue placeholder="Filter" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All ({items.length})</SelectItem>
                 {STATUSES.map((s) => (
                   <SelectItem key={s} value={s}>{s.replace("_", " ")} ({counts[s] ?? 0})</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={sort} onValueChange={setSort}>
+              <SelectTrigger className="w-[180px]"><SelectValue placeholder="Sort" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="original">Original order</SelectItem>
+                <SelectItem value="status">Status (incomplete first)</SelectItem>
+                <SelectItem value="status_desc">Status (complete first)</SelectItem>
+                <SelectItem value="label">Label (A–Z)</SelectItem>
+                <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={download}>Download JSON</Button>
