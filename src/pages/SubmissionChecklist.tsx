@@ -198,6 +198,21 @@ export default function SubmissionChecklist() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Rehydrate a still-valid undo snapshot after page refresh
+  useEffect(() => {
+    const persisted = loadPersistedUndo();
+    if (!persisted) return;
+    const remaining = persisted.expiresAt - Date.now();
+    if (remaining <= 0) return;
+    const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
+      action: { label: "Undo", onClick: applyUndo },
+      duration: remaining,
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+    });
+    undoRef.current = { prev: persisted.prev, expiresAt: persisted.expiresAt, toastId };
+  }, []);
+
   const handleResetClick = () => {
     if (isDefault) {
       performReset();
