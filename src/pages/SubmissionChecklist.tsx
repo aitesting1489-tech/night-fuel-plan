@@ -59,11 +59,26 @@ export default function SubmissionChecklist() {
   const isDefault = filter === "all" && search === "" && sort === "original";
 
   const performReset = () => {
+    const prev = { search, filter, sort };
     setSearch("");
     setFilter("all");
     setSort("original");
     try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-    toast.success("Search & filters reset");
+    toast.success("Search & filters reset", {
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setSearch(prev.search);
+          setFilter(prev.filter);
+          setSort(prev.sort);
+          try {
+            localStorage.setItem(PREFS_KEY, JSON.stringify(prev));
+          } catch { /* ignore */ }
+          toast.success("Previous search & filters restored");
+        },
+      },
+      duration: 8000,
+    });
   };
 
   const handleResetClick = () => {
