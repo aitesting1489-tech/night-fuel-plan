@@ -102,6 +102,9 @@ export default function SubmissionChecklist() {
   const expectedRef = useRef<Snapshot | null>(null);
   // Mirror of current state, for use inside callbacks registered once on mount
   const stateRef = useRef<Snapshot>({ search, filter, sort });
+  // Wraps the search input + filter/sort selects so the undo shortcut can
+  // skip key events originating from those specific controls.
+  const controlsRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     stateRef.current = { search, filter, sort };
   }, [search, filter, sort]);
@@ -238,8 +241,9 @@ export default function SubmissionChecklist() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "z") return;
-      const t = e.target as HTMLElement | null;
-      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      // Only suppress when focus is inside the search/filter/sort controls
+      const t = e.target as Node | null;
+      if (t && controlsRef.current && controlsRef.current.contains(t)) return;
       if (e.shiftKey) {
         if (pruneExpired(redoStackRef.current).length > 0) {
           e.preventDefault();
@@ -373,7 +377,7 @@ export default function SubmissionChecklist() {
         />
         <div className="flex-1" />
         {items && (
-          <>
+          <div ref={controlsRef} className="contents">
             <Input
               type="search"
               placeholder="Search label, category…"
@@ -441,7 +445,7 @@ export default function SubmissionChecklist() {
               </AlertDialogContent>
             </AlertDialog>
             <Button onClick={download}>Download JSON</Button>
-          </>
+          </div>
         )}
       </Card>
 
