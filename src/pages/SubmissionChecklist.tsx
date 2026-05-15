@@ -373,7 +373,7 @@ export default function SubmissionChecklist() {
         />
         <div className="flex-1" />
         {items && (
-          <>
+          <div ref={controlsRef} className="contents">
             <Input
               type="search"
               placeholder="Search label, category…"
