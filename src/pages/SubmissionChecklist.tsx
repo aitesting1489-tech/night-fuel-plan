@@ -37,7 +37,14 @@ const statusVariant = (s: Status) =>
   s === "complete" ? "default" : s === "in_progress" ? "secondary" : s === "skipped" ? "outline" : "destructive";
 
 const PREFS_KEY = "circadia-submission-checklist-prefs";
-const UNDO_KEY = "circadia-submission-checklist-undo";
+const UNDO_KEY = "circadia-submission-checklist-undo-stack";
+const UNDO_WINDOW_MS = 8000;
+const MAX_HISTORY = 10;
+
+type Snapshot = { search: string; filter: string; sort: string };
+type Entry = { prev: Snapshot; expiresAt: number };
+
+const DEFAULTS: Snapshot = { search: "", filter: "all", sort: "original" };
 
 const loadPrefs = () => {
   try {
@@ -48,22 +55,27 @@ const loadPrefs = () => {
   }
 };
 
-const loadPersistedUndo = (): {
-  prev: { search: string; filter: string; sort: string };
-  expiresAt: number;
-} | null => {
+const loadPersistedUndoStack = (): Entry[] => {
   try {
     const raw = typeof window !== "undefined" ? localStorage.getItem(UNDO_KEY) : null;
-    if (!raw) return null;
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.expiresAt !== "number" || !parsed.prev) return null;
-    if (Date.now() > parsed.expiresAt) {
-      localStorage.removeItem(UNDO_KEY);
-      return null;
-    }
-    return parsed;
+    if (!Array.isArray(parsed)) return [];
+    const now = Date.now();
+    return parsed.filter(
+      (e: any) => e && e.prev && typeof e.expiresAt === "number" && e.expiresAt > now
+    );
   } catch {
-    return null;
+    return [];
+  }
+};
+
+const persistUndoStack = (stack: Entry[]) => {
+  try {
+    if (stack.length === 0) localStorage.removeItem(UNDO_KEY);
+    else localStorage.setItem(UNDO_KEY, JSON.stringify(stack));
+  } catch {
+    /* ignore */
   }
 };
 
@@ -78,117 +90,162 @@ export default function SubmissionChecklist() {
 
   const isDefault = filter === "all" && search === "" && sort === "original";
 
-  // Pending undo/redo for the most recent reset; cleared after the snackbar
-  // window, by toast dismissal, or when the user changes any control.
-  type Pending = {
-    prev: { search: string; filter: string; sort: string };
-    expiresAt: number;
-    toastId: string | number;
-  };
-  const undoRef = useRef<Pending | null>(null);
-  const redoRef = useRef<Pending | null>(null);
-  const UNDO_WINDOW_MS = 8000;
+  // Stack-based undo/redo. Each reset pushes onto undoStack with its own expiry;
+  // entries older than the window are pruned. A single toast at a time reflects
+  // the head of the active stack. Manual edits to controls clear all history.
+  const undoStackRef = useRef<Entry[]>([]);
+  const redoStackRef = useRef<Entry[]>([]);
+  const toastIdRef = useRef<string | number | null>(null);
+  // Tracks the state we expect after our own programmatic change so the
+  // change-watcher effect can distinguish those from manual edits.
+  const expectedRef = useRef<Snapshot | null>(null);
+  // Mirror of current state, for use inside callbacks registered once on mount
+  const stateRef = useRef<Snapshot>({ search, filter, sort });
+  useEffect(() => {
+    stateRef.current = { search, filter, sort };
+  }, [search, filter, sort]);
 
-  const clearPending = (which: "undo" | "redo", dismissToast = false) => {
-    const ref = which === "undo" ? undoRef : redoRef;
-    const pending = ref.current;
-    if (!pending) return;
-    if (dismissToast) toast.dismiss(pending.toastId);
-    ref.current = null;
-    if (which === "undo") {
-      try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
+  const pruneExpired = (stack: Entry[]) => {
+    const now = Date.now();
+    return stack.filter((e) => e.expiresAt > now);
+  };
+
+  const dismissActiveToast = () => {
+    if (toastIdRef.current != null) {
+      toast.dismiss(toastIdRef.current);
+      toastIdRef.current = null;
     }
   };
 
-  const applyUndo = () => {
-    const pending = undoRef.current;
-    if (!pending || Date.now() > pending.expiresAt) return false;
-    const restored = pending.prev;
-    undoRef.current = null; // clear before state changes to avoid invalidation
-    try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ }
-    setSearch(restored.search);
-    setFilter(restored.filter);
-    setSort(restored.sort);
-    try { localStorage.setItem(PREFS_KEY, JSON.stringify(restored)); } catch { /* ignore */ }
-    toast.dismiss(pending.toastId);
-    // Now offer Redo for the same window length
-    const toastId = toast.success("Restored — Ctrl/⌘+Shift+Z to redo reset", {
-      action: { label: "Redo", onClick: applyRedo },
-      duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { redoRef.current = null; },
-      onDismiss: () => { redoRef.current = null; },
+  const handleHistoryCleared = () => {
+    toastIdRef.current = null;
+    undoStackRef.current = [];
+    redoStackRef.current = [];
+    persistUndoStack([]);
+    expectedRef.current = null;
+  };
+
+  const showUndoToast = (count: number, durationMs: number) => {
+    dismissActiveToast();
+    const message =
+      count > 1
+        ? `Search & filters reset · ${count} undo steps available (Ctrl/⌘+Z)`
+        : "Search & filters reset (Ctrl/⌘+Z to undo)";
+    toastIdRef.current = toast.success(message, {
+      action: { label: "Undo", onClick: () => applyUndo() },
+      duration: Math.max(500, durationMs),
+      onAutoClose: handleHistoryCleared,
+      onDismiss: handleHistoryCleared,
     });
-    redoRef.current = { prev: restored, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
+  };
+
+  const showRedoToast = (count: number, durationMs: number) => {
+    dismissActiveToast();
+    const message =
+      count > 1
+        ? `Restored · ${count} redo steps available (Ctrl/⌘+Shift+Z)`
+        : "Restored — Ctrl/⌘+Shift+Z to redo reset";
+    toastIdRef.current = toast.success(message, {
+      action: { label: "Redo", onClick: () => applyRedo() },
+      duration: Math.max(500, durationMs),
+      onAutoClose: handleHistoryCleared,
+      onDismiss: handleHistoryCleared,
+    });
+  };
+
+  const refreshActiveToast = () => {
+    undoStackRef.current = pruneExpired(undoStackRef.current);
+    redoStackRef.current = pruneExpired(redoStackRef.current);
+    if (undoStackRef.current.length > 0) {
+      const remaining = Math.max(...undoStackRef.current.map((e) => e.expiresAt - Date.now()));
+      showUndoToast(undoStackRef.current.length, remaining);
+    } else if (redoStackRef.current.length > 0) {
+      const remaining = Math.max(...redoStackRef.current.map((e) => e.expiresAt - Date.now()));
+      showRedoToast(redoStackRef.current.length, remaining);
+    } else {
+      dismissActiveToast();
+      expectedRef.current = null;
+    }
+  };
+
+  const applyUndo = (): boolean => {
+    undoStackRef.current = pruneExpired(undoStackRef.current);
+    if (undoStackRef.current.length === 0) return false;
+    const entry = undoStackRef.current.pop()!;
+    // Save current state on the redo stack
+    redoStackRef.current.push({ prev: { ...stateRef.current }, expiresAt: Date.now() + UNDO_WINDOW_MS });
+    if (redoStackRef.current.length > MAX_HISTORY) {
+      redoStackRef.current.splice(0, redoStackRef.current.length - MAX_HISTORY);
+    }
+    expectedRef.current = entry.prev;
+    setSearch(entry.prev.search);
+    setFilter(entry.prev.filter);
+    setSort(entry.prev.sort);
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(entry.prev)); } catch { /* ignore */ }
+    persistUndoStack(undoStackRef.current);
+    refreshActiveToast();
     return true;
   };
 
-  const applyRedo = () => {
-    const pending = redoRef.current;
-    if (!pending || Date.now() > pending.expiresAt) return false;
-    const previousState = pending.prev; // what we'd undo back to after re-applying reset
-    redoRef.current = null;
-    setSearch("");
-    setFilter("all");
-    setSort("original");
-    try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-    toast.dismiss(pending.toastId);
-    const toastId = toast.success("Reset re-applied (Ctrl/⌘+Z to undo)", {
-      action: { label: "Undo", onClick: applyUndo },
-      duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-    });
-    undoRef.current = { prev: previousState, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
-    try {
-      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev: previousState, expiresAt: undoRef.current.expiresAt }));
-    } catch { /* ignore */ }
+  const applyRedo = (): boolean => {
+    redoStackRef.current = pruneExpired(redoStackRef.current);
+    if (redoStackRef.current.length === 0) return false;
+    const entry = redoStackRef.current.pop()!;
+    undoStackRef.current.push({ prev: { ...stateRef.current }, expiresAt: Date.now() + UNDO_WINDOW_MS });
+    if (undoStackRef.current.length > MAX_HISTORY) {
+      undoStackRef.current.splice(0, undoStackRef.current.length - MAX_HISTORY);
+    }
+    expectedRef.current = entry.prev;
+    setSearch(entry.prev.search);
+    setFilter(entry.prev.filter);
+    setSort(entry.prev.sort);
+    try { localStorage.setItem(PREFS_KEY, JSON.stringify(entry.prev)); } catch { /* ignore */ }
+    persistUndoStack(undoStackRef.current);
+    refreshActiveToast();
     return true;
   };
 
   const performReset = () => {
-    const prev = { search, filter, sort };
-    clearPending("redo", true); // a fresh reset supersedes any pending redo
-    setSearch("");
-    setFilter("all");
-    setSort("original");
+    undoStackRef.current = pruneExpired(undoStackRef.current);
+    undoStackRef.current.push({ prev: { ...stateRef.current }, expiresAt: Date.now() + UNDO_WINDOW_MS });
+    if (undoStackRef.current.length > MAX_HISTORY) {
+      undoStackRef.current.splice(0, undoStackRef.current.length - MAX_HISTORY);
+    }
+    redoStackRef.current = []; // a fresh action invalidates redo history
+    expectedRef.current = DEFAULTS;
+    setSearch(DEFAULTS.search);
+    setFilter(DEFAULTS.filter);
+    setSort(DEFAULTS.sort);
     try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-    const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
-      action: { label: "Undo", onClick: applyUndo },
-      duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-    });
-    undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
-    try {
-      localStorage.setItem(UNDO_KEY, JSON.stringify({ prev, expiresAt: undoRef.current.expiresAt }));
-    } catch { /* ignore */ }
+    persistUndoStack(undoStackRef.current);
+    showUndoToast(undoStackRef.current.length, UNDO_WINDOW_MS);
   };
 
-  // Invalidate pending undo/redo as soon as the user changes a control manually
+  // Manual edits invalidate all history
   useEffect(() => {
-    const isPostReset = search === "" && filter === "all" && sort === "original";
-    if (undoRef.current && !isPostReset) clearPending("undo", true);
-    if (redoRef.current) {
-      const p = redoRef.current.prev;
-      const matchesRestored = search === p.search && filter === p.filter && sort === p.sort;
-      if (!matchesRestored) clearPending("redo", true);
+    const expected = expectedRef.current;
+    if (!expected) return;
+    if (search === expected.search && filter === expected.filter && sort === expected.sort) {
+      // matches our own programmatic change — don't invalidate
+      return;
     }
+    handleHistoryCleared();
+    dismissActiveToast();
   }, [search, filter, sort]);
 
   // Keyboard shortcuts: Ctrl/Cmd+Z = undo, Ctrl/Cmd+Shift+Z = redo
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "z") return;
-      // Don't hijack while the user is editing a text field
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
       if (e.shiftKey) {
-        if (redoRef.current && Date.now() <= redoRef.current.expiresAt) {
+        if (pruneExpired(redoStackRef.current).length > 0) {
           e.preventDefault();
           applyRedo();
         }
       } else {
-        if (undoRef.current && Date.now() <= undoRef.current.expiresAt) {
+        if (pruneExpired(undoStackRef.current).length > 0) {
           e.preventDefault();
           applyUndo();
         }
@@ -198,19 +255,14 @@ export default function SubmissionChecklist() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Rehydrate a still-valid undo snapshot after page refresh
+  // Rehydrate a still-valid undo stack after page refresh
   useEffect(() => {
-    const persisted = loadPersistedUndo();
-    if (!persisted) return;
-    const remaining = persisted.expiresAt - Date.now();
-    if (remaining <= 0) return;
-    const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
-      action: { label: "Undo", onClick: applyUndo },
-      duration: remaining,
-      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
-    });
-    undoRef.current = { prev: persisted.prev, expiresAt: persisted.expiresAt, toastId };
+    const stack = loadPersistedUndoStack();
+    if (stack.length === 0) return;
+    undoStackRef.current = stack;
+    expectedRef.current = DEFAULTS; // last persisted action was a reset
+    const remaining = Math.max(...stack.map((e) => e.expiresAt - Date.now()));
+    showUndoToast(stack.length, remaining);
   }, []);
 
   const handleResetClick = () => {
