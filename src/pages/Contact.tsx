@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import SEO from "@/components/SEO";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name is too long"),
@@ -76,6 +77,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <SEO
+        title="Contact Circadia – Night Shift Nutrition Support"
+        description="Reach the Circadia team with questions, feedback, or partnership inquiries. We respond within 24 hours."
+        path="/contact"
+      />
       <div className="max-w-md w-full bg-card rounded-2xl p-8 border border-border">
         <p className="text-2xl mb-2">🌙</p>
         <h1 className="text-xl font-bold text-foreground font-serif mb-1">Get in touch</h1>

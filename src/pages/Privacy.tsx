@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 const Privacy = () => {
   const navigate = useNavigate();
@@ -11,6 +12,11 @@ const Privacy = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen px-4 py-8 max-w-lg mx-auto"
     >
+      <SEO
+        title="Privacy Policy | Circadia"
+        description="How Circadia collects, processes, and protects your shift and dietary data. GDPR and CCPA compliant. Export or delete your data anytime."
+        path="/privacy"
+      />
       <button
         onClick={() => navigate(-1)}
         className="h-9 w-9 rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors active:scale-95 mb-6"
