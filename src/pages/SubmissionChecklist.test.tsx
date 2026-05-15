@@ -72,6 +72,47 @@ describe("SubmissionChecklist — undo invalidation", () => {
     expect(getSearchInput().value).toBe("edited");
   });
 
+  it("Ctrl/⌘+Z is a no-op after invalidation and never restores stale settings", async () => {
+    renderPage();
+    await uploadSampleChecklist();
+
+    // Establish a non-default pre-reset snapshot.
+    fireEvent.change(getSearchInput(), { target: { value: "alpha" } });
+    await performResetWithConfirm();
+    expect(getSearchInput().value).toBe("");
+    expect(
+      localStorage.getItem("circadia-submission-checklist-undo-stack")
+    ).not.toBeNull();
+
+    // User settles on a new, divergent value → invalidates.
+    fireEvent.change(getSearchInput(), { target: { value: "edited" } });
+    await flushInvalidationDebounce();
+    expect(
+      localStorage.getItem("circadia-submission-checklist-undo-stack")
+    ).toBeNull();
+
+    // Press Ctrl+Z multiple times, then ⌘+Z, then with shift — none should
+    // restore the stale "alpha" search or otherwise mutate the controls.
+    for (const opts of [
+      { ctrlKey: true },
+      { ctrlKey: true },
+      { metaKey: true },
+      { ctrlKey: true, shiftKey: true },
+    ]) {
+      await act(async () => {
+        fireEvent.keyDown(window, { key: "z", ...opts });
+      });
+    }
+
+    // Search remains the user's edited value, NOT the stale snapshot.
+    expect(getSearchInput().value).toBe("edited");
+    expect(getSearchInput().value).not.toBe("alpha");
+    // Persisted snapshot stays cleared — no resurrection from storage.
+    expect(
+      localStorage.getItem("circadia-submission-checklist-undo-stack")
+    ).toBeNull();
+  });
+
   it("undo restores the previous search when nothing is edited (positive control)", async () => {
     renderPage();
     await uploadSampleChecklist();
