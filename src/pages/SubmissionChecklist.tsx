@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 type Status = "complete" | "action_required" | "in_progress" | "skipped";
@@ -399,9 +400,31 @@ export default function SubmissionChecklist() {
                 <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" onClick={handleResetClick} disabled={isDefault}>
-              Reset search & filters
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {/* span wrapper lets the tooltip show even when the button is disabled */}
+                <span tabIndex={0} className="inline-flex">
+                  <Button variant="outline" onClick={handleResetClick} disabled={isDefault}>
+                    Reset search & filters
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                {isDefault
+                  ? "Already at defaults"
+                  : (
+                    <span className="flex items-center gap-1">
+                      Press
+                      <kbd className="rounded border bg-muted px-1.5 py-0.5 text-[10px] font-mono">
+                        {typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘" : "Ctrl"}
+                      </kbd>
+                      +
+                      <kbd className="rounded border bg-muted px-1.5 py-0.5 text-[10px] font-mono">Z</kbd>
+                      to undo while the snackbar is visible
+                    </span>
+                  )}
+              </TooltipContent>
+            </Tooltip>
             <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
               <AlertDialogContent>
                 <AlertDialogHeader>
