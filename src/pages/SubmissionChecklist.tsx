@@ -225,16 +225,52 @@ export default function SubmissionChecklist() {
     showUndoToast(undoStackRef.current.length, UNDO_WINDOW_MS);
   };
 
-  // Manual edits invalidate all history
+  // Manual edits invalidate all history — but only if the user actually settles
+  // on a state that diverges from what we expect. Transient changes that revert
+  // back to the expected state (e.g. typing then clearing the search, toggling
+  // a filter and switching back) keep the undo window alive.
+  const invalidateTimerRef = useRef<number | null>(null);
   useEffect(() => {
     const expected = expectedRef.current;
     if (!expected) return;
-    if (search === expected.search && filter === expected.filter && sort === expected.sort) {
-      // matches our own programmatic change — don't invalidate
+    const matchesExpected =
+      search === expected.search && filter === expected.filter && sort === expected.sort;
+    // Cancel any pending invalidation — we'll re-evaluate below.
+    if (invalidateTimerRef.current != null) {
+      window.clearTimeout(invalidateTimerRef.current);
+      invalidateTimerRef.current = null;
+    }
+    if (matchesExpected) return;
+    // Also keep history if the current state matches the prev-snapshot at the
+    // top of the undo stack — undo would be a no-op, but a subsequent edit
+    // could still legitimately diverge, so we just wait.
+    const top = undoStackRef.current[undoStackRef.current.length - 1];
+    if (
+      top &&
+      search === top.prev.search &&
+      filter === top.prev.filter &&
+      sort === top.prev.sort
+    ) {
       return;
     }
-    handleHistoryCleared();
-    dismissActiveToast();
+    invalidateTimerRef.current = window.setTimeout(() => {
+      invalidateTimerRef.current = null;
+      const exp = expectedRef.current;
+      if (!exp) return;
+      const stillDiverged =
+        stateRef.current.search !== exp.search ||
+        stateRef.current.filter !== exp.filter ||
+        stateRef.current.sort !== exp.sort;
+      if (!stillDiverged) return;
+      handleHistoryCleared();
+      dismissActiveToast();
+    }, 450);
+    return () => {
+      if (invalidateTimerRef.current != null) {
+        window.clearTimeout(invalidateTimerRef.current);
+        invalidateTimerRef.current = null;
+      }
+    };
   }, [search, filter, sort]);
 
   // Keyboard shortcuts: Ctrl/Cmd+Z = undo, Ctrl/Cmd+Shift+Z = redo
