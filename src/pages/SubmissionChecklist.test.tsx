@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import SubmissionChecklist from "./SubmissionChecklist";
 
 const sampleItems = [
@@ -14,14 +14,20 @@ const getFileInput = () =>
   document.querySelector('input[type="file"]') as HTMLInputElement;
 
 const uploadSampleChecklist = async () => {
-  const file = new File([JSON.stringify(sampleItems)], "checklist.json", {
+  const json = JSON.stringify(sampleItems);
+  // jsdom's File doesn't always implement .text(); provide a stub object that satisfies the component
+  const fileLike = {
+    name: "checklist.json",
     type: "application/json",
-  });
+    text: () => Promise.resolve(json),
+  } as unknown as File;
+  const input = getFileInput();
   await act(async () => {
-    fireEvent.change(getFileInput(), { target: { files: [file] } });
-    // Allow the async file.text() promise inside onUpload to resolve
-    await Promise.resolve();
-    await Promise.resolve();
+    fireEvent.change(input, { target: { files: [fileLike] } });
+  });
+  // Wait for the search input to appear (items loaded)
+  await waitFor(() => {
+    expect(getSearchInput()).not.toBeNull();
   });
 };
 
