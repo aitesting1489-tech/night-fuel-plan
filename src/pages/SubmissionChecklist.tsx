@@ -4,6 +4,17 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 type Status = "complete" | "action_required" | "in_progress" | "skipped";
@@ -170,18 +181,34 @@ export default function SubmissionChecklist() {
                 <SelectItem value="category">Category (A–Z)</SelectItem>
               </SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSearch("");
-                setFilter("all");
-                setSort("original");
-                try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
-                toast.success("Search & filters reset");
-              }}
-            >
-              Reset search & filters
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">Reset search & filters</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset search & filters?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This clears your current search text, status filter, and sort order, and removes the saved
+                    preferences from this browser. Your checklist items and notes are not affected.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      setSearch("");
+                      setFilter("all");
+                      setSort("original");
+                      try { localStorage.removeItem(PREFS_KEY); } catch { /* ignore */ }
+                      toast.success("Search & filters reset");
+                    }}
+                  >
+                    Reset
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <Button onClick={download}>Download JSON</Button>
           </>
         )}
