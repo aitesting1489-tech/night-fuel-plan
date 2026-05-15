@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,12 +25,32 @@ const STATUSES: Status[] = ["complete", "in_progress", "action_required", "skipp
 const statusVariant = (s: Status) =>
   s === "complete" ? "default" : s === "in_progress" ? "secondary" : s === "skipped" ? "outline" : "destructive";
 
+const PREFS_KEY = "circadia-submission-checklist-prefs";
+
+const loadPrefs = () => {
+  try {
+    const raw = typeof window !== "undefined" ? localStorage.getItem(PREFS_KEY) : null;
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+};
+
 export default function SubmissionChecklist() {
   const [items, setItems] = useState<ChecklistItem[] | null>(null);
   const [fileName, setFileName] = useState<string>("circadia-submission-checklist.json");
-  const [filter, setFilter] = useState<string>("all");
-  const [search, setSearch] = useState<string>("");
-  const [sort, setSort] = useState<string>("original");
+  const initialPrefs = loadPrefs();
+  const [filter, setFilter] = useState<string>(initialPrefs.filter ?? "all");
+  const [search, setSearch] = useState<string>(initialPrefs.search ?? "");
+  const [sort, setSort] = useState<string>(initialPrefs.sort ?? "original");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ filter, search, sort }));
+    } catch {
+      /* ignore quota / private mode errors */
+    }
+  }, [filter, search, sort]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { complete: 0, in_progress: 0, action_required: 0, skipped: 0 };
