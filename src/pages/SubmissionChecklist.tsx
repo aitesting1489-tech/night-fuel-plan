@@ -135,8 +135,8 @@ export default function SubmissionChecklist() {
     const toastId = toast.success("Reset re-applied (Ctrl/⌘+Z to undo)", {
       action: { label: "Undo", onClick: applyUndo },
       duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; },
-      onDismiss: () => { undoRef.current = null; },
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
     });
     undoRef.current = { prev: previousState, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
     try {
@@ -155,8 +155,8 @@ export default function SubmissionChecklist() {
     const toastId = toast.success("Search & filters reset (Ctrl/⌘+Z to undo)", {
       action: { label: "Undo", onClick: applyUndo },
       duration: UNDO_WINDOW_MS,
-      onAutoClose: () => { undoRef.current = null; },
-      onDismiss: () => { undoRef.current = null; },
+      onAutoClose: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
+      onDismiss: () => { undoRef.current = null; try { localStorage.removeItem(UNDO_KEY); } catch { /* ignore */ } },
     });
     undoRef.current = { prev, expiresAt: Date.now() + UNDO_WINDOW_MS, toastId };
     try {
