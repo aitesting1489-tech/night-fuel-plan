@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import { isNativeApp, hasNativeProEntitlement } from "@/lib/iap";
 
 interface AuthContextType {
   user: User | null;
@@ -32,6 +33,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
 
   const checkSubscription = useCallback(async () => {
+    // On iOS/Android, an Apple/Google in-app subscription also grants Pro.
+    if (isNativeApp()) {
+      try {
+        const { data: { user: current } } = await supabase.auth.getUser();
+        if (await hasNativeProEntitlement(current?.id)) {
+          setIsProSubscriber(true);
+          setSubscriptionEnd(null);
+          return;
+        }
+      } catch (err) {
+        console.error("Native entitlement check failed:", err);
+      }
+    }
     try {
       const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
