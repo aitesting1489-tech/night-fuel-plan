@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crown, X, Activity, Moon, Sparkles, Zap, Shield, ChevronRight, Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { trackEvent } from "@/lib/analytics";
-import { toast } from "sonner";
+import { useProCheckout } from "@/hooks/useProCheckout";
 
 const eliteFeatures = [
   { icon: Activity, label: "Apple Health Sync", desc: "Auto-log meals & hydration to HealthKit" },
