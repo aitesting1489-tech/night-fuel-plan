@@ -1,48 +1,19 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Download, Sparkles, Check, CreditCard } from "lucide-react";
+import { Lock, Download, Sparkles, Check, CreditCard, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { trackEvent } from "@/lib/analytics";
 import { useAuth } from "@/contexts/AuthContext";
+import { useProCheckout } from "@/hooks/useProCheckout";
 
 const ProUpsell = () => {
   const { user, isProSubscriber } = useAuth();
-  const [processing, setProcessing] = useState(false);
-
-  const handleCheckout = async () => {
-    if (!user) {
-      toast.error("Please sign in to subscribe");
-      return;
-    }
-    setProcessing(true);
-    trackEvent("begin_checkout", { value: 9.99, currency: "USD" });
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err: any) {
-      toast.error("Checkout failed. Please try again.");
-      console.error(err);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleManage = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err) {
-      toast.error("Could not open subscription management.");
-      console.error(err);
-    }
-  };
+  const {
+    subscribe: handleCheckout,
+    manage: handleManage,
+    restore: handleRestore,
+    processing,
+    restoring,
+    native,
+  } = useProCheckout();
 
   const handleDownload = () => {
     toast.success("Downloading your personalized PDF guide...");
@@ -107,6 +78,25 @@ const ProUpsell = () => {
               </>
             )}
           </button>
+        )}
+
+        {!isProSubscriber && (
+          <div className="space-y-2">
+            <p className="text-[10px] text-center text-muted-foreground/60 font-light leading-relaxed">
+              $9.99 per month, auto-renewing until cancelled. Manage or cancel anytime in your
+              device subscription settings.
+            </p>
+            {native && (
+              <button
+                onClick={handleRestore}
+                disabled={restoring}
+                className="w-full rounded-xl py-2 px-4 font-display text-xs text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-colors disabled:opacity-60"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                {restoring ? "Restoring…" : "Restore Purchases"}
+              </button>
+            )}
+          </div>
         )}
 
         {isProSubscriber && (

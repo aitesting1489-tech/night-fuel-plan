@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crown, X, Activity, Moon, Sparkles, Zap, Shield, ChevronRight, Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { trackEvent } from "@/lib/analytics";
-import { toast } from "sonner";
+import { useProCheckout } from "@/hooks/useProCheckout";
 
 const eliteFeatures = [
   { icon: Activity, label: "Apple Health Sync", desc: "Auto-log meals & hydration to HealthKit" },
@@ -15,42 +13,15 @@ const eliteFeatures = [
 
 const ProFeaturesModal = () => {
   const [open, setOpen] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const { user, isProSubscriber } = useAuth();
-
-  const handleSubscribe = async () => {
-    if (!user) {
-      toast.error("Please sign in to subscribe");
-      return;
-    }
-    setProcessing(true);
-    trackEvent("begin_checkout", { value: 9.99, currency: "USD", items: [{ item_name: "Circadia Pro" }] });
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err) {
-      toast.error("Checkout failed. Please try again.");
-      console.error(err);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleManage = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (err) {
-      toast.error("Could not open subscription management.");
-      console.error(err);
-    }
-  };
+  const { isProSubscriber } = useAuth();
+  const {
+    subscribe: handleSubscribe,
+    manage: handleManage,
+    restore: handleRestore,
+    processing,
+    restoring,
+    native,
+  } = useProCheckout();
 
   return (
     <>
@@ -167,9 +138,21 @@ const ProFeaturesModal = () => {
                 )}
 
                 {!isProSubscriber && (
-                  <p className="text-[10px] text-center text-muted-foreground/50 font-light">
-                    Cancel anytime · Billed monthly
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-center text-muted-foreground/50 font-light leading-relaxed">
+                      $9.99 per month, auto-renewing until cancelled. Manage or cancel anytime in
+                      your device subscription settings.
+                    </p>
+                    {native && (
+                      <button
+                        onClick={handleRestore}
+                        disabled={restoring}
+                        className="w-full py-2 font-display text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-60"
+                      >
+                        {restoring ? "Restoring…" : "Restore Purchases"}
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </motion.div>
