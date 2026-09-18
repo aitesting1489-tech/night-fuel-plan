@@ -1,66 +1,15 @@
 import { Capacitor } from "@capacitor/core";
+import { NativePurchases, PURCHASE_TYPE } from "@capgo/native-purchases";
 
 /**
- * RevenueCat public SDK keys (safe to ship in the app bundle).
- * Get them from RevenueCat → Project settings → API keys.
- *   iOS  key starts with "appl_"
- *   Android key starts with "goog_"
+ * Direct Apple / Google in-app purchases — no third-party service.
+ *
+ * The product ID below MUST exactly match the subscription created in
+ * App Store Connect (Subscriptions → "Circadia Pro").
  */
-export const REVENUECAT_IOS_KEY = "";
-export const REVENUECAT_ANDROID_KEY = "";
+export const PRO_PRODUCT_ID = "com.circadia.app.pro.monthly";
 
-/** Entitlement identifier configured in RevenueCat for Circadia Pro. */
-export const PRO_ENTITLEMENT = "pro";
-
-export const isNativeApp = () => Capacitor.isNativePlatform();
-
-const platformKey = () =>
-  Capacitor.getPlatform() === "android" ? REVENUECAT_ANDROID_KEY : REVENUECAT_IOS_KEY;
-
-let configured = false;
-
-type PurchasesModule = typeof import("@revenuecat/purchases-capacitor");
-
-async function getPurchases(appUserId?: string) {
-  if (!isNativeApp()) return null;
-  const key = platformKey();
-  if (!key) {
-    console.warn("[IAP] RevenueCat API key is not set.");
-    return null;
-  }
-  const mod: PurchasesModule = await import("@revenuecat/purchases-capacitor");
-  const { Purchases, LOG_LEVEL } = mod;
-  if (!configured) {
-    await Purchases.setLogLevel({ level: LOG_LEVEL.WARN });
-    await Purchases.configure({ apiKey: key, appUserID: appUserId ?? null });
-    configured = true;
-  } else if (appUserId) {
-    try {
-      await Purchases.logIn({ appUserID: appUserId });
-    } catch (err) {
-      console.warn("[IAP] logIn failed", err);
-    }
-  }
-  return Purchases;
-}
-
-/** Link the store account to the signed-in Circadia user. */
-export async function identifyIapUser(appUserId: string) {
-  await getPurchases(appUserId);
-}
-
-/** True when the native store reports an active Pro entitlement. */
-export async function hasNativeProEntitlement(appUserId?: string): Promise<boolean> {
-  const Purchases = await getPurchases(appUserId);
-  if (!Purchases) return false;
-  try {
-    const { customerInfo } = await Purchases.getCustomerInfo();
-    return Boolean(customerInfo.entitlements.active[PRO_ENTITLEMENT]);
-  } catch (err) {
-    console.error("[IAP] getCustomerInfo failed", err);
-    return false;
-  }
-}
+export const isNativeApp = () => Capacitor.isNativeApp;
 
 export type PurchaseResult =
   | { status: "success" }
@@ -68,36 +17,71 @@ export type PurchaseResult =
   | { status: "unavailable" }
   | { status: "error"; message: string };
 
-/** Present Apple's / Google's purchase sheet for the current Pro offering. */
-export async function purchasePro(appUserId?: string): Promise<PurchaseResult> {
-  const Purchases = await getPurchases(appUserId);
-  if (!Purchases) return { status: "unavailable" };
+/** Product info (title, real price string from Apple) for the Pro subscription. */
+export async function getProProduct(): Promise<{
+  title: string;
+  priceString: string;
+} | null> {
+  if (!isNativeApp()) return null;
   try {
-    const offerings = await Purchases.getOfferings();
-    const pkg =
-      offerings.current?.availablePackages?.[0] ??
-      Object.values(offerings.all ?? {})[0]?.availablePackages?.[0];
-    if (!pkg) return { status: "unavailable" };
-
-    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
-    return customerInfo.entitlements.active[PRO_ENTITLEMENT]
-      ? { status: "success" }
-      : { status: "error", message: "Purchase completed but Pro is not active yet." };
+    const { products } = await NativePurchases.getProducts({
+      productIdentifiers: [PRO_PRODUCT_ID],
+      productType: PURCHASE_TYPE.SUBS,
+    });
+    const product = products[0];
+    if (!product) return null;
+    return { title: product.title, priceString: product.priceString };
   } catch (err) {
-    const e = err as { code?: string; userCancelled?: boolean; message?: string };
-    if (e?.userCancelled || e?.code === "1") return { status: "cancelled" };
+    console.warn("[IAP] Could not load product info", err);
+    return null;
+  }
+}
+
+/** True when the store reports an active Circadia Pro subscription. */
+export async function hasNativeProEntitlement(_appUserId?: string): Promise<boolean> {
+  if (!isNativeApp()) return false;
+  try {
+    const { purchases } = await NativePurchases.getPurchases({
+      productType: PURCHASE_TYPE.SUBS,
+      onlyCurrentEntitlements: true,
+    });
+    return purchases.some(
+      (p) => p.productIdentifier === PRO_PRODUCT_ID && p.isActive !== false,
+    );
+  } catch (err) {
+    console.error("[IAP] entitlement check failed", err);
+    return false;
+  }
+}
+
+/** Present Apple's purchase sheet for the Pro subscription. */
+export async function purchasePro(_appUserId?: string): Promise<PurchaseResult> {
+  if (!isNativeApp()) return { status: "unavailable" };
+  try {
+    const billing = await NativePurchases.isBillingSupported();
+    if (!billing.isBillingSupported) return { status: "unavailable" };
+
+    const transaction = await NativePurchases.purchaseProduct({
+      productIdentifier: PRO_PRODUCT_ID,
+      productType: PURCHASE_TYPE.SUBS,
+    });
+    return transaction.isActive === false
+      ? { status: "error", message: "Purchase completed but Pro is not active yet." }
+      : { status: "success" };
+  } catch (err) {
+    const e = err as { message?: string };
+    if (e?.message?.toLowerCase().includes("cancel")) return { status: "cancelled" };
     console.error("[IAP] purchase failed", err);
     return { status: "error", message: e?.message ?? "Purchase failed" };
   }
 }
 
 /** Apple requires a visible "Restore Purchases" action. */
-export async function restorePro(appUserId?: string): Promise<boolean> {
-  const Purchases = await getPurchases(appUserId);
-  if (!Purchases) return false;
+export async function restorePro(_appUserId?: string): Promise<boolean> {
+  if (!isNativeApp()) return false;
   try {
-    const { customerInfo } = await Purchases.restorePurchases();
-    return Boolean(customerInfo.entitlements.active[PRO_ENTITLEMENT]);
+    await NativePurchases.restorePurchases();
+    return await hasNativeProEntitlement();
   } catch (err) {
     console.error("[IAP] restore failed", err);
     return false;
