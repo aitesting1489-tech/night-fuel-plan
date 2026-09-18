@@ -138,9 +138,21 @@ const ProFeaturesModal = () => {
                 )}
 
                 {!isProSubscriber && (
-                  <p className="text-[10px] text-center text-muted-foreground/50 font-light">
-                    Cancel anytime · Billed monthly
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-center text-muted-foreground/50 font-light leading-relaxed">
+                      $9.99 per month, auto-renewing until cancelled. Manage or cancel anytime in
+                      your device subscription settings.
+                    </p>
+                    {native && (
+                      <button
+                        onClick={handleRestore}
+                        disabled={restoring}
+                        className="w-full py-2 font-display text-xs text-muted-foreground hover:text-foreground transition-colors disabled:opacity-60"
+                      >
+                        {restoring ? "Restoring…" : "Restore Purchases"}
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </motion.div>
