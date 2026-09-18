@@ -3,9 +3,11 @@ import { Lock, Download, Sparkles, Check, CreditCard, RotateCcw } from "lucide-r
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProCheckout } from "@/hooks/useProCheckout";
+import { useProPrice } from "@/hooks/useProPrice";
 
 const ProUpsell = () => {
   const { user, isProSubscriber } = useAuth();
+  const proPrice = useProPrice();
   const {
     subscribe: handleCheckout,
     manage: handleManage,
@@ -74,7 +76,7 @@ const ProUpsell = () => {
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                Subscribe Pro — $9.99/mo
+                Subscribe Pro — {proPrice ?? "$9.99/mo"}
               </>
             )}
           </button>
@@ -83,8 +85,8 @@ const ProUpsell = () => {
         {!isProSubscriber && (
           <div className="space-y-2">
             <p className="text-[10px] text-center text-muted-foreground/60 font-light leading-relaxed">
-              $9.99 per month, auto-renewing until cancelled. Manage or cancel anytime in your
-              device subscription settings.
+              {proPrice ?? "$9.99"} per month, auto-renewing until cancelled. Manage or cancel
+              anytime in your device subscription settings.
             </p>
             {native && (
               <button

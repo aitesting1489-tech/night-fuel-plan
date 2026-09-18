@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Crown, X, Activity, Moon, Sparkles, Zap, Shield, ChevronRight, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProCheckout } from "@/hooks/useProCheckout";
+import { useProPrice } from "@/hooks/useProPrice";
 
 const eliteFeatures = [
   { icon: Activity, label: "Apple Health Sync", desc: "Auto-log meals & hydration to HealthKit" },
@@ -14,6 +15,7 @@ const eliteFeatures = [
 const ProFeaturesModal = () => {
   const [open, setOpen] = useState(false);
   const { isProSubscriber } = useAuth();
+  const proPrice = useProPrice();
   const {
     subscribe: handleSubscribe,
     manage: handleManage,
@@ -86,7 +88,9 @@ const ProFeaturesModal = () => {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <span className="font-display text-3xl font-bold text-foreground">$9.99</span>
+                    <span className="font-display text-3xl font-bold text-foreground">
+                      {proPrice ?? "$9.99"}
+                    </span>
                     <span className="text-sm text-muted-foreground font-light">/month</span>
                   </div>
                 )}
@@ -130,7 +134,7 @@ const ProFeaturesModal = () => {
                     ) : (
                       <>
                         <Sparkles className="h-4 w-4" />
-                        Subscribe — $9.99/mo
+                        Subscribe — {proPrice ?? "$9.99/mo"}
                         <ChevronRight className="h-4 w-4" />
                       </>
                     )}
@@ -140,8 +144,8 @@ const ProFeaturesModal = () => {
                 {!isProSubscriber && (
                   <div className="space-y-2">
                     <p className="text-[10px] text-center text-muted-foreground/50 font-light leading-relaxed">
-                      $9.99 per month, auto-renewing until cancelled. Manage or cancel anytime in
-                      your device subscription settings.
+                      {proPrice ?? "$9.99"} per month, auto-renewing until cancelled. Manage or
+                      cancel anytime in your device subscription settings.
                     </p>
                     {native && (
                       <button
