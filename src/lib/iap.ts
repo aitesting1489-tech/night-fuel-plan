@@ -9,7 +9,7 @@ import { NativePurchases, PURCHASE_TYPE } from "@capgo/native-purchases";
  */
 export const PRO_PRODUCT_ID = "com.circadia.app.pro.monthly";
 
-export const isNativeApp = () => Capacitor.isNativeApp;
+export const isNativeApp = () => Capacitor.isNativePlatform();
 
 export type PurchaseResult =
   | { status: "success" }
